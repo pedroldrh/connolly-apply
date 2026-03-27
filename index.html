@@ -156,7 +156,7 @@
       margin-bottom: 24px;
     }
     .hero h1 em {
-      color: var(--ink-tertiary);
+      color: #b45309;
     }
     .hero-sub {
       font-size: 18px;
@@ -412,8 +412,24 @@
       padding-bottom: 80px;
     }
 
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-tertiary);
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 20px;
+      transition: color var(--transition);
+    }
+    .back-btn:hover { color: var(--ink); }
     .app-header {
-      padding: 48px 0 36px;
+      padding: 32px 0 36px;
       margin-bottom: 32px;
     }
     .app-header h1 {
@@ -978,6 +994,10 @@
     <div class="container">
 
       <div class="app-header">
+        <button class="back-btn" onclick="showLanding()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8H3M7 4L3 8l4 4"/></svg>
+          Back to home
+        </button>
         <h1>Application</h1>
         <p>All fields marked with <span style="color:var(--primary)">*</span> are required. Navigate between sections before submitting.</p>
         <div class="steps" id="stepBars"></div>
