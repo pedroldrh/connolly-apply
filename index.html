@@ -276,29 +276,20 @@
       margin-bottom: 24px;
       letter-spacing: -0.3px;
     }
-    .gallery-grid {
+    .gallery-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
     }
-    .gallery-grid img {
+    .gallery-row img {
       width: 100%;
-      height: 200px;
+      height: 260px;
       object-fit: cover;
-      border-radius: var(--radius);
-      transition: transform 0.3s ease;
-    }
-    .gallery-grid img:hover {
-      transform: scale(1.03);
-    }
-    .gallery-grid img.span-2 {
-      grid-column: span 2;
-      height: 240px;
+      border-radius: var(--radius-lg);
     }
     @media (max-width: 640px) {
-      .gallery-grid { grid-template-columns: 1fr 1fr; }
-      .gallery-grid img { height: 160px; }
-      .gallery-grid img.span-2 { grid-column: span 2; height: 180px; }
+      .gallery-row { grid-template-columns: 1fr; }
+      .gallery-row img { height: 200px; }
     }
 
     /* ── Info Sections ── */
@@ -1019,13 +1010,9 @@
 
       <section class="gallery">
         <h2>Life at CES</h2>
-        <div class="gallery-grid">
-          <img class="span-2" src="https://2025.connollycenter.com/assets/images/Entrepreneurship_Summit_4-11-25__146.jpg" alt="Summit networking and collaboration">
-          <img src="https://2025.connollycenter.com/assets/images/IMG_4911.jpeg" alt="Bay Area Innovation Tour group">
-          <img src="https://2025.connollycenter.com/assets/images/IMG_6037.jpeg" alt="Summit networking moments">
-          <img class="span-2" src="https://2025.connollycenter.com/assets/images/IMG_8308.jpeg" alt="Pitch competition presentation">
-          <img src="https://2025.connollycenter.com/assets/images/img_5899.jpg" alt="Students at the Connolly Center">
-          <img src="https://2025.connollycenter.com/assets/images/IMG_6825.jpeg" alt="Design thinking and creative problem-solving">
+        <div class="gallery-row">
+          <img src="https://2025.connollycenter.com/assets/images/Entrepreneurship_Summit_4-11-25__146.jpg" alt="Summit networking and collaboration">
+          <img src="https://2025.connollycenter.com/assets/images/IMG_8308.jpeg" alt="Pitch competition presentation">
         </div>
       </section>
 
