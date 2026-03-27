@@ -176,62 +176,92 @@
       object-fit: cover;
       aspect-ratio: 4 / 3;
     }
-    .hero-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 18px 44px;
-      background: var(--ink);
-      color: #fff;
-      border: none;
-      border-radius: 60px;
-      font-family: var(--sans);
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      text-decoration: none;
+    /* Liquid metal animated border wrapper */
+    .hero-cta-outer {
       position: relative;
-      overflow: hidden;
+      display: inline-block;
+      border-radius: 60px;
+      padding: 3px;
+      background: linear-gradient(135deg, #888, #fff, #888, #bbb, #fff, #999);
+      background-size: 300% 300%;
+      animation: liquidMetal 4s ease infinite;
+      box-shadow: 0 20px 50px -12px rgba(0,0,0,0.25);
+      cursor: pointer;
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-    .hero-cta::before {
+    .hero-cta-outer::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%);
+      border-radius: 60px;
+      padding: 3px;
+      background: linear-gradient(135deg, #b45309, #d4a060, #ffffff, #888, #b45309, #d4a060);
+      background-size: 300% 300%;
+      animation: liquidMetal 4s ease infinite;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.4s ease;
+      z-index: 0;
     }
-    .hero-cta:hover::before {
+    .hero-cta-outer:hover::before {
       opacity: 1;
     }
-    .hero-cta:hover {
-      transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+    @keyframes liquidMetal {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 100% 0%; }
+      50% { background-position: 100% 100%; }
+      75% { background-position: 0% 100%; }
+      100% { background-position: 0% 50%; }
     }
-    .hero-cta:active {
-      transform: translateY(-1px) scale(0.98);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    .hero-cta-outer:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 24px 60px -12px rgba(0,0,0,0.3);
+    }
+    .hero-cta-outer:active {
+      transform: scale(0.98);
+      box-shadow: 0 10px 30px -12px rgba(0,0,0,0.25);
+    }
+
+    .hero-cta {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px 16px 40px;
+      background: #fff;
+      color: var(--ink);
+      border: none;
+      border-radius: 58px;
+      font-family: var(--sans);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .hero-cta-outer:hover .hero-cta {
+      background: #fafafa;
     }
     .hero-cta .cta-arrow {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 28px;
-      height: 28px;
-      background: rgba(255,255,255,0.15);
+      width: 36px;
+      height: 36px;
+      background: #f5f5f5;
       border-radius: 50%;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;
     }
-    .hero-cta:hover .cta-arrow {
+    .hero-cta-outer:hover .cta-arrow {
       transform: translateX(4px);
-      background: rgba(255,255,255,0.25);
+      background: #eee;
     }
     .hero-cta .cta-arrow svg {
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
+      color: var(--ink-secondary);
     }
 
     /* ── Info Sections ── */
@@ -892,10 +922,12 @@
           <h1 class="hero-title">Apply to the Connolly<br>Entrepreneurship <em>Society</em></h1>
           <p class="hero-sub">We're looking for builders, thinkers, and ambitious students ready to turn ideas into reality. No experience necessary — just initiative.</p>
           <div class="hero-cta-wrap">
-            <button class="hero-cta" onclick="showApplication()">
-              Start Application
-              <span class="cta-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
-            </button>
+            <div class="hero-cta-outer" onclick="showApplication()">
+              <button class="hero-cta">
+                Start Application
+                <span class="cta-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+              </button>
+            </div>
           </div>
         </div>
         <div class="hero-image">
@@ -981,10 +1013,12 @@
       <div class="container">
         <h2>Ready to apply?</h2>
         <p>Review your answers before submitting.</p>
-        <button class="hero-cta" onclick="showApplication()">
-          Start Application
-          <span class="cta-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
-        </button>
+        <div class="hero-cta-outer" onclick="showApplication()">
+          <button class="hero-cta">
+            Start Application
+            <span class="cta-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+          </button>
+        </div>
       </div>
     </section>
   </div>
