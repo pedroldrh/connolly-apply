@@ -179,33 +179,59 @@
     .hero-cta {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 14px 36px;
+      gap: 12px;
+      padding: 18px 44px;
       background: var(--ink);
       color: #fff;
       border: none;
-      border-radius: 6px;
+      border-radius: 60px;
       font-family: var(--sans);
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
       cursor: pointer;
-      transition: background var(--transition), transform var(--transition);
       text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .hero-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .hero-cta:hover::before {
+      opacity: 1;
     }
     .hero-cta:hover {
-      background: #2a2a2a;
-      transform: translateY(-1px);
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.2);
     }
-    .hero-cta svg {
-      width: 16px;
-      height: 16px;
-      transition: transform var(--transition);
+    .hero-cta:active {
+      transform: translateY(-1px) scale(0.98);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-    .hero-cta:hover svg { transform: translateX(3px); }
-    .hero-cta-hint {
-      font-size: 13px;
-      color: var(--ink-faint);
+    .hero-cta .cta-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;
+    }
+    .hero-cta:hover .cta-arrow {
+      transform: translateX(4px);
+      background: rgba(255,255,255,0.25);
+    }
+    .hero-cta .cta-arrow svg {
+      width: 14px;
+      height: 14px;
     }
 
     /* ── Info Sections ── */
@@ -852,7 +878,7 @@
           <div class="hero-cta-wrap">
             <button class="hero-cta" onclick="showApplication()">
               Start Application
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+              <span class="cta-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
             </button>
           </div>
         </div>
@@ -941,7 +967,7 @@
         <p>Review your answers before submitting.</p>
         <button class="hero-cta" onclick="showApplication()">
           Start Application
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          <span class="cta-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
         </button>
       </div>
     </section>
