@@ -61,9 +61,13 @@
     }
 
     .container {
-      max-width: 760px;
+      max-width: 960px;
       margin: 0 auto;
       padding: 0 24px;
+    }
+    .container--narrow {
+      max-width: 760px;
+      margin: 0 auto;
     }
 
     /* ══════════════════════════════════════
@@ -79,7 +83,7 @@
       border-bottom: 1px solid var(--border);
     }
     .nav-inner {
-      max-width: 760px;
+      max-width: 960px;
       margin: 0 auto;
       padding: 0 24px;
       height: 60px;
@@ -123,8 +127,14 @@
     }
 
     .hero {
-      padding: 80px 0 64px;
-      text-align: center;
+      padding: 72px 0 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .hero-content {
+      text-align: left;
     }
     .hero-eyebrow {
       display: inline-block;
@@ -137,29 +147,33 @@
     }
     .hero h1 {
       font-family: 'Instrument Serif', Georgia, serif;
-      font-size: clamp(36px, 5.5vw, 52px);
+      font-size: clamp(32px, 4vw, 46px);
       font-weight: 400;
       line-height: 1.15;
       letter-spacing: -1px;
       color: var(--ink);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .hero h1 em {
       color: var(--ink-tertiary);
     }
     .hero-sub {
-      font-size: 17px;
+      font-size: 16px;
       line-height: 1.7;
       color: var(--ink-secondary);
-      max-width: 500px;
-      margin: 0 auto;
+      max-width: 440px;
     }
     .hero-cta-wrap {
-      margin-top: 64px;
+      margin-top: 36px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       gap: 12px;
+    }
+    .hero-image img {
+      width: 100%;
+      border-radius: var(--radius-lg);
+      object-fit: cover;
+      aspect-ratio: 4 / 3;
     }
     .hero-cta {
       display: inline-flex;
@@ -191,25 +205,6 @@
     .hero-cta-hint {
       font-size: 13px;
       color: var(--ink-faint);
-    }
-
-    /* ── Team Photo ── */
-    .team-photo {
-      margin: 0 -24px;
-      text-align: center;
-    }
-    .team-photo img {
-      width: 100%;
-      max-width: 760px;
-      border-radius: var(--radius-lg);
-      object-fit: cover;
-      max-height: 420px;
-    }
-    .team-photo-caption {
-      font-size: 13px;
-      color: var(--ink-faint);
-      margin-top: 12px;
-      font-style: italic;
     }
 
     /* ── Info Sections ── */
@@ -812,9 +807,12 @@
 
     /* Responsive */
     @media (max-width: 640px) {
-      .hero { padding: 64px 0 40px; }
+      .hero { padding: 48px 0 40px; grid-template-columns: 1fr; gap: 32px; }
+      .hero-content { text-align: center; }
+      .hero-sub { margin: 0 auto; }
+      .hero-cta-wrap { justify-content: center; }
       .hero h1 { font-size: 32px; }
-      .hero-cta-wrap { margin-top: 40px; }
+      .hero-image img { aspect-ratio: 16 / 9; }
       .traits { grid-template-columns: 1fr; }
       .field-row { grid-template-columns: 1fr; }
       .form-block { padding: 24px 20px; }
@@ -846,21 +844,21 @@
     <div class="container">
 
       <section class="hero">
-        <div class="hero-eyebrow">Spring 2026 Application</div>
-        <h1 class="hero-title">Apply to the Connolly<br>Entrepreneurship <em>Society</em></h1>
-        <p class="hero-sub">We're looking for builders, thinkers, and ambitious students ready to turn ideas into reality. No experience necessary — just initiative.</p>
-        <div class="hero-cta-wrap">
-          <button class="hero-cta" onclick="showApplication()">
-            Start Application
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-          </button>
+        <div class="hero-content">
+          <div class="hero-eyebrow">Spring 2026 Application</div>
+          <h1 class="hero-title">Apply to the Connolly<br>Entrepreneurship <em>Society</em></h1>
+          <p class="hero-sub">We're looking for builders, thinkers, and ambitious students ready to turn ideas into reality. No experience necessary — just initiative.</p>
+          <div class="hero-cta-wrap">
+            <button class="hero-cta" onclick="showApplication()">
+              Start Application
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="team.png" alt="Connolly Entrepreneurship Society members">
         </div>
       </section>
-
-      <div class="team-photo">
-        <img src="team.png" alt="Connolly Entrepreneurship Society members">
-        <p class="team-photo-caption">The Connolly Entrepreneurship Society, Spring 2026</p>
-      </div>
 
       <section class="info-section">
         <h2>What is CES?</h2>
