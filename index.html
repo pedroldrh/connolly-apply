@@ -94,12 +94,10 @@
       text-decoration: none;
       color: var(--ink);
     }
-    .nav-mark {
-      font-family: var(--serif);
-      font-weight: 700;
-      font-size: 20px;
-      letter-spacing: -0.5px;
-      color: var(--primary);
+    .nav-logo {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
     }
     .nav-text {
       font-size: 13px;
@@ -831,7 +829,7 @@
   <nav class="nav">
     <div class="nav-inner">
       <a href="#" class="nav-brand" onclick="showLanding(); return false;">
-        <span class="nav-mark">CES</span>
+        <img src="logo.png" alt="CES" class="nav-logo">
         <span class="nav-text">Connolly Entrepreneurship Society <span>|</span> W&L</span>
       </a>
     </div>
