@@ -315,6 +315,23 @@
     .info-section p + p {
       margin-top: 12px;
     }
+    .info-section--row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .info-section--row p { max-width: none; }
+    .info-section-img {
+      width: 100%;
+      border-radius: var(--radius-lg);
+      object-fit: cover;
+      height: 280px;
+    }
+    @media (max-width: 640px) {
+      .info-section--row { grid-template-columns: 1fr; gap: 24px; }
+      .info-section-img { height: 200px; }
+    }
 
     /* Traits */
     .traits {
@@ -963,10 +980,13 @@
         </div>
       </section>
 
-      <section class="info-section">
-        <h2>What is CES?</h2>
-        <p>The Connolly Entrepreneurship Society is Washington and Lee's premier student-run organization for entrepreneurship, innovation, and building. We connect students with mentors, resources, and a community of peers who are actively working on ventures, products, and ideas that matter.</p>
-        <p>Members get access to workshops, founder talks, funding opportunities, and a tight-knit network of builders on campus and beyond. The society has over $25,000 in funding to support student ventures and programming.</p>
+      <section class="info-section info-section--row">
+        <div>
+          <h2>What is CES?</h2>
+          <p>The Connolly Entrepreneurship Society is Washington and Lee's premier student-run organization for entrepreneurship, innovation, and building. We connect students with mentors, resources, and a community of peers who are actively working on ventures, products, and ideas that matter.</p>
+          <p>Members get access to workshops, founder talks, funding opportunities, and a tight-knit network of builders on campus and beyond. The society has over $25,000 in funding to support student ventures and programming.</p>
+        </div>
+        <img class="info-section-img" src="https://2025.connollycenter.com/assets/images/Entrepreneurship_Summit_4-11-25__219.jpg" alt="Greg Barrow giving a talk at the E-Summit">
       </section>
 
       <section class="info-section">
