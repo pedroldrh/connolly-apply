@@ -264,6 +264,43 @@
       color: var(--ink-secondary);
     }
 
+    /* ── Photo Gallery ── */
+    .gallery {
+      padding: 64px 0;
+      border-top: 1px solid var(--border);
+    }
+    .gallery h2 {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: -0.3px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .gallery-grid img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      transition: transform 0.3s ease;
+    }
+    .gallery-grid img:hover {
+      transform: scale(1.03);
+    }
+    .gallery-grid img.span-2 {
+      grid-column: span 2;
+      height: 240px;
+    }
+    @media (max-width: 640px) {
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-grid img { height: 160px; }
+      .gallery-grid img.span-2 { grid-column: span 2; height: 180px; }
+    }
+
     /* ── Info Sections ── */
     .info-section {
       padding: 56px 0;
@@ -977,6 +1014,18 @@
             <div class="timeline-date">TBD</div>
             <div class="timeline-desc">Decisions released via email</div>
           </div>
+        </div>
+      </section>
+
+      <section class="gallery">
+        <h2>Life at CES</h2>
+        <div class="gallery-grid">
+          <img class="span-2" src="https://2025.connollycenter.com/assets/images/Entrepreneurship_Summit_4-11-25__146.jpg" alt="Summit networking and collaboration">
+          <img src="https://2025.connollycenter.com/assets/images/IMG_4911.jpeg" alt="Bay Area Innovation Tour group">
+          <img src="https://2025.connollycenter.com/assets/images/IMG_6037.jpeg" alt="Summit networking moments">
+          <img class="span-2" src="https://2025.connollycenter.com/assets/images/IMG_8308.jpeg" alt="Pitch competition presentation">
+          <img src="https://2025.connollycenter.com/assets/images/img_5899.jpg" alt="Students at the Connolly Center">
+          <img src="https://2025.connollycenter.com/assets/images/IMG_6825.jpeg" alt="Design thinking and creative problem-solving">
         </div>
       </section>
 
