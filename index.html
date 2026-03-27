@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply — Connolly Entrepreneurship Society</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --ink: #111111;
+      --ink-secondary: #555555;
+      --ink-tertiary: #888888;
+      --ink-faint: #aaaaaa;
+      --surface: #ffffff;
+      --surface-alt: #fafaf8;
+      --surface-warm: #f5f4f0;
+      --border: #e8e6e1;
+      --border-strong: #d4d1ca;
+      --primary: #1a3a5c;
+      --primary-dark: #142e4a;
+      --primary-light: #eef2f7;
+      --primary-glow: rgba(26, 58, 92, 0.12);
+      --accent-teal: #1a3a5c;
+      --accent-teal-light: #eef2f7;
+      --error: #c0392b;
+      --error-light: #fdf0ef;
+      --success: #1a7a4c;
+      --success-light: #edf7f1;
+      --radius: 8px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+      --transition: 0.2s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--surface);
+      color: var(--ink);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-size: 15px;
+    }
+
+    ::selection {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ══════════════════════════════════════
+       NAV
+       ══════════════════════════════════════ */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .nav-mark {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      color: var(--primary);
+    }
+    .nav-text {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-secondary);
+    }
+    .nav-text span {
+      color: var(--ink-faint);
+      margin: 0 6px;
+    }
+
+    /* ══════════════════════════════════════
+       HERO
+       ══════════════════════════════════════ */
+    #landing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero {
+      padding: 80px 0 64px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5.5vw, 52px);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+    .hero-sub {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--ink-secondary);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .hero-cta-wrap {
+      margin-top: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 36px;
+      background: var(--ink);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+      text-decoration: none;
+    }
+    .hero-cta:hover {
+      background: #2a2a2a;
+      transform: translateY(-1px);
+    }
+    .hero-cta svg {
+      width: 16px;
+      height: 16px;
+      transition: transform var(--transition);
+    }
+    .hero-cta:hover svg { transform: translateX(3px); }
+    .hero-cta-hint {
+      font-size: 13px;
+      color: var(--ink-faint);
+    }
+
+    /* ── Team Photo ── */
+    .team-photo {
+      margin: 0 -24px;
+      text-align: center;
+    }
+    .team-photo img {
+      width: 100%;
+      max-width: 760px;
+      border-radius: var(--radius-lg);
+      object-fit: cover;
+      max-height: 420px;
+    }
+    .team-photo-caption {
+      font-size: 13px;
+      color: var(--ink-faint);
+      margin-top: 12px;
+      font-style: italic;
+    }
+
+    /* ── Info Sections ── */
+    .info-section {
+      padding: 56px 0;
+    }
+    .info-section + .info-section {
+      border-top: 1px solid var(--border);
+    }
+    .info-section h2 {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      letter-spacing: -0.3px;
+    }
+    .info-section p {
+      color: var(--ink-secondary);
+      font-size: 15px;
+      line-height: 1.75;
+      max-width: 560px;
+    }
+    .info-section p + p {
+      margin-top: 12px;
+    }
+
+    /* Traits */
+    .traits {
+      list-style: none;
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 20px;
+    }
+    .traits li {
+      font-size: 14px;
+      color: var(--ink-secondary);
+      padding-left: 22px;
+      position: relative;
+      line-height: 1.6;
+    }
+    .traits li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 8px;
+      height: 8px;
+      border-radius: 3px;
+      background: var(--primary);
+      opacity: 0.5;
+    }
+
+    /* Timeline */
+    .timeline {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 0;
+    }
+    .timeline-item + .timeline-item {
+      border-top: 1px solid var(--border);
+    }
+    .timeline-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+      opacity: 0.6;
+    }
+    .timeline-date {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 110px;
+      flex-shrink: 0;
+    }
+    .timeline-desc {
+      font-size: 14px;
+      color: var(--ink-secondary);
+    }
+
+    /* FAQ */
+    .faq-section {
+      padding: 0 0 80px;
+    }
+    .faq-section-title {
+      font-family: var(--serif);
+      font-size: 26px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-item:first-child {
+      border-top: 1px solid var(--border);
+    }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 20px 0;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .faq-q::after {
+      content: '+';
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+      transition: transform var(--transition);
+      width: 24px;
+      text-align: center;
+    }
+    .faq-item.open .faq-q::after { content: '\2212'; }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding-bottom: 20px;
+    }
+    .faq-a p {
+      font-size: 14px;
+      color: var(--ink-secondary);
+      line-height: 1.7;
+    }
+
+    /* Bottom CTA */
+    .bottom-cta {
+      padding: 80px 0;
+      text-align: center;
+      background: var(--surface-alt);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .bottom-cta h2 {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .bottom-cta p {
+      color: var(--ink-secondary);
+      font-size: 16px;
+      margin-bottom: 36px;
+    }
+
+    /* ══════════════════════════════════════
+       APPLICATION PAGE
+       ══════════════════════════════════════ */
+    #application {
+      display: none;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    .app-header {
+      padding: 48px 0 36px;
+      margin-bottom: 32px;
+    }
+    .app-header h1 {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 600;
+    }
+    .app-header p {
+      color: var(--ink-secondary);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    /* Progress */
+    .steps {
+      display: flex;
+      gap: 6px;
+      margin-top: 28px;
+    }
+    .step-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      transition: background var(--transition);
+    }
+    .step-bar.active { background: var(--primary); }
+    .step-bar.completed { background: var(--primary-dark); }
+    .step-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+    .step-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-faint);
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+    .step-label.active { color: var(--primary); font-weight: 600; }
+    .step-label.completed { color: var(--ink-secondary); }
+
+    /* Form Steps */
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+
+    .form-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      margin-bottom: 20px;
+    }
+    .form-block-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .form-block-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: var(--primary-light);
+    }
+    .form-block-title {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .form-block-desc {
+      font-size: 13px;
+      color: var(--ink-tertiary);
+      margin-top: 2px;
+    }
+
+    /* Fields */
+    .field { margin-bottom: 24px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+    .field-label .req { color: var(--primary); margin-left: 2px; }
+    .field-hint {
+      display: block;
+      font-size: 12px;
+      color: var(--ink-tertiary);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    select {
+      width: 100%;
+      max-width: 400px;
+      height: 44px;
+      padding: 0 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--surface);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    input::placeholder, textarea::placeholder { color: var(--ink-faint); }
+    input.error, textarea.error, select.error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px var(--error-light);
+    }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23718096' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--surface);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .field-row .field { margin-bottom: 0; }
+    .field-row input, .field-row select { max-width: 100%; }
+
+    /* Word Counter */
+    .word-counter {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--ink-faint);
+      font-weight: 500;
+    }
+    .word-counter.warn { color: var(--error); }
+
+    /* File Upload */
+    .upload-zone {
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 36px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      max-width: 400px;
+    }
+    .upload-zone:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .upload-zone.has-file {
+      border-color: var(--success);
+      background: var(--success-light);
+      border-style: solid;
+    }
+    .upload-icon {
+      margin-bottom: 10px;
+      color: var(--ink-tertiary);
+    }
+    .upload-zone:hover .upload-icon { color: var(--primary); }
+    .upload-zone.has-file .upload-icon { color: var(--success); }
+    .upload-text {
+      font-size: 14px;
+      color: var(--ink-secondary);
+    }
+    .upload-text strong { color: var(--primary); }
+    .upload-zone.has-file .upload-text strong { color: var(--success); }
+    .upload-file-name {
+      font-size: 12px;
+      color: var(--ink-tertiary);
+      margin-top: 6px;
+    }
+    .upload-zone input[type="file"] { display: none; }
+
+    /* Dynamic Links */
+    .dynamic-list { display: flex; flex-direction: column; gap: 10px; }
+    .dynamic-row { display: flex; gap: 8px; align-items: center; }
+    .dynamic-row input { flex: 1; max-width: 100%; }
+    .btn-icon {
+      width: 44px;
+      height: 44px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-tertiary);
+      font-size: 18px;
+      transition: all var(--transition);
+      flex-shrink: 0;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--ink); }
+    .btn-icon.remove:hover {
+      border-color: var(--error);
+      color: var(--error);
+      background: var(--error-light);
+    }
+    .btn-add {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border: 1.5px dashed var(--border-strong);
+      border-radius: var(--radius);
+      background: none;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      margin-top: 6px;
+    }
+    .btn-add:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* Essay */
+    .essay-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .essay-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* Navigation Buttons */
+    .form-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: var(--radius);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition);
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--ink);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2a2a2a;
+      transform: translateY(-1px);
+    }
+    .btn-ghost {
+      background: none;
+      color: var(--ink-secondary);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--border-strong); color: var(--ink); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-submit-final {
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 40px;
+      font-size: 15px;
+    }
+    .btn-submit-final:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Review */
+    .review-section { margin-bottom: 28px; }
+    .review-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .review-edit-link {
+      font-size: 12px;
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .review-edit-link:hover { text-decoration: underline; }
+    .review-field { display: flex; gap: 12px; padding: 10px 0; }
+    .review-field-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-tertiary);
+      min-width: 120px;
+      flex-shrink: 0;
+    }
+    .review-field-value { font-size: 14px; color: var(--ink); word-break: break-word; }
+    .review-field-value.empty { color: var(--ink-faint); font-style: italic; }
+    .review-essay { margin-top: 12px; }
+    .review-essay-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      margin-bottom: 8px;
+    }
+    .review-essay-body {
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      background: var(--surface-alt);
+      padding: 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    /* Confirmation */
+    .confirmation {
+      display: none;
+      text-align: center;
+      padding: 100px 0;
+    }
+    .confirmation.active { display: block; }
+    .conf-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--success-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+    }
+    .conf-icon svg { color: var(--success); }
+    .confirmation h2 {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .confirmation p {
+      color: var(--ink-secondary);
+      font-size: 15px;
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .confirmation p + p { margin-top: 12px; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 0;
+      text-align: center;
+    }
+    footer p { font-size: 12px; color: var(--ink-faint); }
+    footer a { color: var(--primary); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .hero { padding: 64px 0 40px; }
+      .hero h1 { font-size: 32px; }
+      .hero-cta-wrap { margin-top: 40px; }
+      .traits { grid-template-columns: 1fr; }
+      .field-row { grid-template-columns: 1fr; }
+      .form-block { padding: 24px 20px; }
+      .timeline-item { flex-wrap: wrap; }
+      .form-nav { flex-direction: column-reverse; gap: 12px; }
+      .form-nav .btn { width: 100%; justify-content: center; }
+      .step-labels { display: none; }
+      .review-field { flex-direction: column; gap: 2px; }
+      .review-field-label { min-width: auto; }
+      .nav-text { display: none; }
+      .bottom-cta { padding: 56px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-brand" onclick="showLanding(); return false;">
+        <span class="nav-mark">CES</span>
+        <span class="nav-text">Connolly Entrepreneurship Society <span>|</span> W&L</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ═══════ LANDING ═══════ -->
+  <div id="landing">
+    <div class="container">
+
+      <section class="hero">
+        <div class="hero-eyebrow">Spring 2026 Application</div>
+        <h1>Apply to the Connolly<br>Entrepreneurship Society</h1>
+        <p class="hero-sub">We're looking for builders, thinkers, and ambitious students ready to turn ideas into reality. No experience necessary — just initiative.</p>
+        <div class="hero-cta-wrap">
+          <button class="hero-cta" onclick="showApplication()">
+            Start Application
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <div class="team-photo">
+        <img src="team.png" alt="Connolly Entrepreneurship Society members">
+        <p class="team-photo-caption">The Connolly Entrepreneurship Society, Spring 2026</p>
+      </div>
+
+      <section class="info-section">
+        <h2>What is CES?</h2>
+        <p>The Connolly Entrepreneurship Society is Washington and Lee's premier student-run organization for entrepreneurship, innovation, and building. We connect students with mentors, resources, and a community of peers who are actively working on ventures, products, and ideas that matter.</p>
+        <p>Members get access to workshops, founder talks, funding opportunities, and a tight-knit network of builders on campus and beyond. The society has over $25,000 in funding to support student ventures and programming.</p>
+      </section>
+
+      <section class="info-section">
+        <h2>Who should apply?</h2>
+        <p>You don't need to have started a company. We're looking for students who are curious, driven, and eager to build things — whether that's a startup, a campus initiative, a creative project, or something entirely new.</p>
+        <ul class="traits">
+          <li>You've built something on your own</li>
+          <li>You're working on a business idea</li>
+          <li>You want to learn how startups work</li>
+          <li>You think creatively about problems</li>
+          <li>You take initiative without being asked</li>
+          <li>You want to surround yourself with builders</li>
+        </ul>
+      </section>
+
+      <section class="info-section">
+        <h2>Timeline</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">TBD</div>
+            <div class="timeline-desc">Applications open</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">TBD</div>
+            <div class="timeline-desc">Application deadline</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">TBD</div>
+            <div class="timeline-desc">Interviews with selected applicants</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">TBD</div>
+            <div class="timeline-desc">Decisions released via email</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="faq-section">
+        <h2 class="faq-section-title">Frequently Asked Questions</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do I need entrepreneurial experience to apply?</button>
+            <div class="faq-a"><p>No. We value ambition, curiosity, and initiative over a polished resume. If you've ever built something — a website, a club, a side project — or simply want to start, you belong here.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What is the time commitment?</button>
+            <div class="faq-a"><p>Members meet for a 1-hour window three times a week on Monday, Wednesday, and Friday. We respect your academic schedule and other commitments.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can first-years apply?</button>
+            <div class="faq-a"><p>Absolutely. We welcome students from all class years. Some of our most active members joined as first-years.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What happens after I'm accepted?</button>
+            <div class="faq-a"><p>New members are onboarded at the start of the term and placed into a group led by a board member. You'll also have the opportunity to be mentored by an alumni working in the startup world. From day one, you're integrated into our programming, events, and community.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Who can I contact with questions?</button>
+            <div class="faq-a"><p>Reach out to us at <a href="mailto:plironderobles@mail.wlu.edu" style="color:var(--primary)">plironderobles@mail.wlu.edu</a>. We're happy to help.</p></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom CTA (full width bg) -->
+    <section class="bottom-cta">
+      <div class="container">
+        <h2>Ready to apply?</h2>
+        <p>Review your answers before submitting.</p>
+        <button class="hero-cta" onclick="showApplication()">
+          Start Application
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══════ APPLICATION ═══════ -->
+  <div id="application">
+    <div class="container">
+
+      <div class="app-header">
+        <h1>Application</h1>
+        <p>All fields marked with <span style="color:var(--primary)">*</span> are required. Navigate between sections before submitting.</p>
+        <div class="steps" id="stepBars"></div>
+        <div class="step-labels" id="stepLabels"></div>
+      </div>
+
+      <form id="appForm" novalidate>
+
+        <!-- STEP 0: Basic Info -->
+        <div class="form-step" data-step="0">
+          <div class="form-block">
+            <div class="form-block-header">
+              <div class="form-block-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div>
+                <div class="form-block-title">Basic Information</div>
+                <div class="form-block-desc">Tell us who you are.</div>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label class="field-label">First Name <span class="req">*</span></label>
+                <input type="text" name="firstName" required>
+              </div>
+              <div class="field">
+                <label class="field-label">Last Name <span class="req">*</span></label>
+                <input type="text" name="lastName" required>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:24px">
+              <label class="field-label">School Email <span class="req">*</span></label>
+              <input type="email" name="email" placeholder="you@mail.wlu.edu" required>
+            </div>
+
+            <div class="field-row" style="margin-top:24px">
+              <div class="field">
+                <label class="field-label">Graduating Class <span class="req">*</span></label>
+                <select name="classYear" required>
+                  <option value="" disabled selected>Select year</option>
+                  <option>2027</option>
+                  <option>2028</option>
+                  <option>2029</option>
+                  <option>2030</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label">Major(s) <span class="req">*</span></label>
+                <input type="text" name="major" placeholder="e.g. Economics" required>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:24px">
+              <label class="field-label">Minor(s)</label>
+              <span class="field-hint">Optional</span>
+              <input type="text" name="minor" placeholder="e.g. Data Science">
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 1: Projects & Experience -->
+        <div class="form-step" data-step="1">
+          <div class="form-block">
+            <div class="form-block-header">
+              <div class="form-block-icon" style="background:var(--primary-light)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              </div>
+              <div>
+                <div class="form-block-title">Projects &amp; Experience</div>
+                <div class="form-block-desc">Tell us what you've built, created, or worked on — big or small.</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label">Describe any projects you've worked on</label>
+              <span class="field-hint">Websites, businesses, nonprofits, 3D printing projects, products, organizations, apps, research, initiatives — anything you've built or helped build.</span>
+              <textarea name="projects" placeholder="Describe your projects, what your role was, and what you accomplished."></textarea>
+            </div>
+
+            <div class="field">
+              <label class="field-label">Project Links</label>
+              <span class="field-hint">Add links to anything you'd like us to see — websites, GitHub, portfolios, press, etc.</span>
+              <div class="dynamic-list" id="linksList">
+                <div class="dynamic-row">
+                  <input type="url" name="projectLinks" placeholder="https://">
+                  <button type="button" class="btn-icon remove" onclick="removeRow(this)" title="Remove" style="visibility:hidden">&times;</button>
+                </div>
+              </div>
+              <button type="button" class="btn-add" onclick="addLinkRow()">+ Add another link</button>
+            </div>
+
+            <div class="field">
+              <label class="field-label">Supporting Materials</label>
+              <span class="field-hint">Upload anything relevant — pitch decks, demos, mockups, etc. (PDF, PNG, JPG, max 10MB)</span>
+              <div class="upload-zone" id="materialsZone" onclick="document.getElementById('materialsInput').click()">
+                <input type="file" id="materialsInput" accept=".pdf,.png,.jpg,.jpeg" multiple onchange="handleUpload(this, 'materialsZone', 'materialsName')">
+                <div class="upload-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="upload-text"><strong>Click to upload</strong> or drag and drop</div>
+                <div class="upload-file-name" id="materialsName"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-block">
+            <div class="form-block-header">
+              <div class="form-block-icon" style="background:var(--primary-light)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              </div>
+              <div>
+                <div class="form-block-title">Resume</div>
+                <div class="form-block-desc">Upload your resume in PDF format.</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label">Resume <span class="req">*</span></label>
+              <div class="upload-zone" id="resumeZone" onclick="document.getElementById('resumeInput').click()">
+                <input type="file" id="resumeInput" accept=".pdf" onchange="handleUpload(this, 'resumeZone', 'resumeName')">
+                <div class="upload-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <div class="upload-text"><strong>Click to upload</strong> your resume (PDF)</div>
+                <div class="upload-file-name" id="resumeName"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Essays -->
+        <div class="form-step" data-step="2">
+          <div class="form-block">
+            <div class="form-block-header">
+              <div class="form-block-icon" style="background:var(--primary-light)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+              </div>
+              <div>
+                <div class="form-block-title">Essays</div>
+                <div class="form-block-desc">This is the most important part of your application. Take your time, be specific, and be yourself.</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="essay-label-row">
+                <label class="field-label">Essay 1 — TBD <span class="req">*</span></label>
+                <span class="essay-badge">1 of 3</span>
+              </div>
+              <span class="field-hint">Essay prompt will be posted soon. Use this space to draft your response.</span>
+              <textarea name="essay1" required data-max-words="300" placeholder="Write your response here..."></textarea>
+              <div class="word-counter" data-for="essay1">0 / 300 words</div>
+            </div>
+
+            <div class="field">
+              <div class="essay-label-row">
+                <label class="field-label">Essay 2 — TBD <span class="req">*</span></label>
+                <span class="essay-badge">2 of 3</span>
+              </div>
+              <span class="field-hint">Essay prompt will be posted soon. Use this space to draft your response.</span>
+              <textarea name="essay2" required data-max-words="300" placeholder="Write your response here..."></textarea>
+              <div class="word-counter" data-for="essay2">0 / 300 words</div>
+            </div>
+
+            <div class="field">
+              <div class="essay-label-row">
+                <label class="field-label">Essay 3 — TBD <span class="req">*</span></label>
+                <span class="essay-badge">3 of 3</span>
+              </div>
+              <span class="field-hint">Essay prompt will be posted soon. Use this space to draft your response.</span>
+              <textarea name="essay3" required data-max-words="300" placeholder="Write your response here..."></textarea>
+              <div class="word-counter" data-for="essay3">0 / 300 words</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Review -->
+        <div class="form-step" data-step="3">
+          <div class="form-block">
+            <div class="form-block-header">
+              <div class="form-block-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <div>
+                <div class="form-block-title">Review Your Application</div>
+                <div class="form-block-desc">Double-check everything before submitting. Click "Edit" to go back to any section.</div>
+              </div>
+            </div>
+            <div id="reviewContent"></div>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <div class="form-nav">
+          <button type="button" class="btn btn-ghost" id="prevBtn" style="visibility:hidden" onclick="prevStep()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8H3M7 4L3 8l4 4"/></svg>
+            Back
+          </button>
+          <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+            Continue
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </button>
+          <button type="submit" class="btn btn-submit-final" id="submitBtn" style="display:none">
+            Submit Application
+          </button>
+        </div>
+      </form>
+
+      <div class="confirmation" id="confirmation">
+        <div class="conf-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2>Application Submitted</h2>
+        <p>Thank you for applying to the Connolly Entrepreneurship Society. We've received your application and will review it carefully.</p>
+        <p>You will be contacted via your school email regardless of the outcome — whether you are selected for an interview or not. Questions? Reach out to <a href="mailto:plironderobles@mail.wlu.edu" style="color:var(--primary)">plironderobles@mail.wlu.edu</a>.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>Connolly Entrepreneurship Society &middot; Washington and Lee University</p>
+      <p style="margin-top:6px"><a href="mailto:plironderobles@mail.wlu.edu">plironderobles@mail.wlu.edu</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const STEP_NAMES = ['Basic Info', 'Experience', 'Essays', 'Review'];
+    let currentStep = 0;
+    const totalSteps = STEP_NAMES.length;
+
+    function showLanding() {
+      document.getElementById('landing').style.display = '';
+      document.getElementById('application').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function showApplication() {
+      document.getElementById('landing').style.display = 'none';
+      document.getElementById('application').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderSteps();
+      goToStep(0);
+    }
+
+    function renderSteps() {
+      const barsEl = document.getElementById('stepBars');
+      const labelsEl = document.getElementById('stepLabels');
+      barsEl.innerHTML = '';
+      labelsEl.innerHTML = '';
+      for (let i = 0; i < totalSteps; i++) {
+        barsEl.innerHTML += `<div class="step-bar" data-step="${i}"></div>`;
+        labelsEl.innerHTML += `<span class="step-label" data-step="${i}" onclick="navigateStep(${i})">${STEP_NAMES[i]}</span>`;
+      }
+    }
+
+    function goToStep(idx) {
+      currentStep = idx;
+      document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+      const target = document.querySelector(`.form-step[data-step="${idx}"]`);
+      if (target) target.classList.add('active');
+      document.querySelectorAll('.step-bar').forEach((bar, i) => {
+        bar.classList.remove('active', 'completed');
+        if (i < idx) bar.classList.add('completed');
+        if (i === idx) bar.classList.add('active');
+      });
+      document.querySelectorAll('.step-label').forEach((lbl, i) => {
+        lbl.classList.remove('active', 'completed');
+        if (i < idx) lbl.classList.add('completed');
+        if (i === idx) lbl.classList.add('active');
+      });
+      document.getElementById('prevBtn').style.visibility = idx === 0 ? 'hidden' : 'visible';
+      if (idx === totalSteps - 1) {
+        document.getElementById('nextBtn').style.display = 'none';
+        document.getElementById('submitBtn').style.display = 'inline-flex';
+        buildReview();
+      } else {
+        document.getElementById('nextBtn').style.display = 'inline-flex';
+        document.getElementById('submitBtn').style.display = 'none';
+      }
+      window.scrollTo({ top: document.querySelector('.app-header').offsetTop - 70, behavior: 'smooth' });
+    }
+
+    function nextStep() {
+      if (!validateStep(currentStep)) return;
+      if (currentStep < totalSteps - 1) goToStep(currentStep + 1);
+    }
+    function prevStep() {
+      if (currentStep > 0) goToStep(currentStep - 1);
+    }
+    function navigateStep(idx) {
+      if (idx <= currentStep) goToStep(idx);
+    }
+
+    function validateStep(idx) {
+      const step = document.querySelector(`.form-step[data-step="${idx}"]`);
+      if (!step) return true;
+      const required = step.querySelectorAll('[required]');
+      let valid = true;
+      required.forEach(field => {
+        field.classList.remove('error');
+        if (!field.value.trim()) {
+          field.classList.add('error');
+          valid = false;
+        }
+        if (field.type === 'email' && field.value && !field.value.includes('@')) {
+          field.classList.add('error');
+          valid = false;
+        }
+      });
+      if (idx === 1) {
+        const resumeInput = document.getElementById('resumeInput');
+        if (!resumeInput.files.length) {
+          document.getElementById('resumeZone').style.borderColor = 'var(--error)';
+          valid = false;
+          setTimeout(() => { document.getElementById('resumeZone').style.borderColor = ''; }, 3000);
+        }
+      }
+      if (!valid) {
+        const firstError = step.querySelector('.error') || step.querySelector('[style*="border-color"]');
+        if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return valid;
+    }
+
+    // Word counters
+    document.querySelectorAll('textarea[data-max-words]').forEach(ta => {
+      const max = parseInt(ta.dataset.maxWords);
+      const counter = ta.parentElement.querySelector('.word-counter');
+      ta.addEventListener('input', () => {
+        const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+        counter.textContent = `${words} / ${max} words`;
+        counter.classList.toggle('warn', words > max);
+      });
+    });
+
+    // File upload
+    function handleUpload(input, zoneId, nameId) {
+      const zone = document.getElementById(zoneId);
+      const nameEl = document.getElementById(nameId);
+      if (input.files.length) {
+        nameEl.textContent = Array.from(input.files).map(f => f.name).join(', ');
+        zone.classList.add('has-file');
+      } else {
+        nameEl.textContent = '';
+        zone.classList.remove('has-file');
+      }
+    }
+    document.querySelectorAll('.upload-zone').forEach(zone => {
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--primary)'; });
+      zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.style.borderColor = '';
+        const input = zone.querySelector('input[type="file"]');
+        input.files = e.dataTransfer.files;
+        input.dispatchEvent(new Event('change'));
+      });
+    });
+
+    // Dynamic links
+    function addLinkRow() {
+      const list = document.getElementById('linksList');
+      const row = document.createElement('div');
+      row.className = 'dynamic-row';
+      row.innerHTML = `<input type="url" name="projectLinks" placeholder="https://"><button type="button" class="btn-icon remove" onclick="removeRow(this)" title="Remove">&times;</button>`;
+      list.appendChild(row);
+      updateRemoveButtons();
+    }
+    function removeRow(btn) {
+      const list = document.getElementById('linksList');
+      if (list.children.length > 1) {
+        btn.closest('.dynamic-row').remove();
+        updateRemoveButtons();
+      }
+    }
+    function updateRemoveButtons() {
+      const rows = document.querySelectorAll('#linksList .dynamic-row');
+      rows.forEach(row => {
+        row.querySelector('.btn-icon.remove').style.visibility = rows.length > 1 ? 'visible' : 'hidden';
+      });
+    }
+
+    // Review
+    function buildReview() {
+      const form = document.getElementById('appForm');
+      const fd = new FormData(form);
+      const links = Array.from(document.querySelectorAll('input[name="projectLinks"]')).map(i => i.value).filter(Boolean);
+      const resumeFile = document.getElementById('resumeInput').files[0];
+      const materialsFiles = Array.from(document.getElementById('materialsInput').files);
+      let html = '';
+      html += `<div class="review-section"><div class="review-section-title">Basic Information <span class="review-edit-link" onclick="goToStep(0)">Edit</span></div>`;
+      html += rf('Name', `${fd.get('firstName') || ''} ${fd.get('lastName') || ''}`.trim());
+      html += rf('Email', fd.get('email'));
+      html += rf('Class', fd.get('classYear'));
+      html += rf('Major(s)', fd.get('major'));
+      html += rf('Minor(s)', fd.get('minor'));
+      html += `</div>`;
+      html += `<div class="review-section"><div class="review-section-title">Projects & Experience <span class="review-edit-link" onclick="goToStep(1)">Edit</span></div>`;
+      html += rf('Projects', fd.get('projects'));
+      if (links.length) html += rf('Links', links.map(l => `<a href="${l}" target="_blank" style="color:var(--primary);word-break:break-all">${l}</a>`).join('<br>'));
+      html += rf('Resume', resumeFile ? resumeFile.name : '');
+      if (materialsFiles.length) html += rf('Materials', materialsFiles.map(f => f.name).join(', '));
+      html += `</div>`;
+      html += `<div class="review-section"><div class="review-section-title">Essays <span class="review-edit-link" onclick="goToStep(2)">Edit</span></div>`;
+      ['essay1','essay2','essay3'].forEach((key,i) => {
+        const val = fd.get(key);
+        html += `<div class="review-essay"><div class="review-essay-label">Essay ${i+1} — TBD</div><div class="review-essay-body">${val ? escapeHtml(val) : '<span style="color:var(--ink-faint);font-style:italic">Not yet written</span>'}</div></div>`;
+      });
+      html += `</div>`;
+      document.getElementById('reviewContent').innerHTML = html;
+    }
+    function rf(label, value) {
+      const val = value || '<span style="color:var(--ink-faint);font-style:italic">Not provided</span>';
+      return `<div class="review-field"><div class="review-field-label">${label}</div><div class="review-field-value">${val}</div></div>`;
+    }
+    function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+    // Submit
+    document.getElementById('appForm').addEventListener('submit', e => {
+      e.preventDefault();
+      for (let i = 0; i < totalSteps - 1; i++) {
+        if (!validateStep(i)) { goToStep(i); return; }
+      }
+      const fd = new FormData(e.target);
+      const data = {};
+      for (const [key, value] of fd.entries()) {
+        if (data[key]) {
+          if (Array.isArray(data[key])) data[key].push(value);
+          else data[key] = [data[key], value];
+        } else data[key] = value;
+      }
+      console.log('Application submitted:', data);
+      document.getElementById('appForm').style.display = 'none';
+      document.querySelector('.form-nav').style.display = 'none';
+      document.getElementById('confirmation').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    renderSteps();
+  </script>
+</body>
+</html>
