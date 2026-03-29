@@ -1138,17 +1138,17 @@
             <div class="field-row">
               <div class="field">
                 <label class="field-label">First Name <span class="req">*</span></label>
-                <input type="text" name="firstName" required>
+                <input type="text" name="firstName" autocomplete="nope-first" required>
               </div>
               <div class="field">
                 <label class="field-label">Last Name <span class="req">*</span></label>
-                <input type="text" name="lastName" required>
+                <input type="text" name="lastName" autocomplete="nope-last" required>
               </div>
             </div>
 
             <div class="field" style="margin-top:24px">
               <label class="field-label">School Email <span class="req">*</span></label>
-              <input type="email" name="email" placeholder="you@mail.wlu.edu" required>
+              <input type="text" name="email" placeholder="you@mail.wlu.edu" autocomplete="nope-email" required>
             </div>
 
             <div class="field-row" style="margin-top:24px">
@@ -1164,14 +1164,14 @@
               </div>
               <div class="field">
                 <label class="field-label">Major(s) <span class="req">*</span></label>
-                <input type="text" name="major" placeholder="e.g. Economics" required>
+                <input type="text" name="major" placeholder="e.g. Economics" autocomplete="nope-major" required>
               </div>
             </div>
 
             <div class="field" style="margin-top:24px">
               <label class="field-label">Minor(s)</label>
               <span class="field-hint">Optional</span>
-              <input type="text" name="minor" placeholder="e.g. Data Science">
+              <input type="text" name="minor" placeholder="e.g. Data Science" autocomplete="nope-minor">
             </div>
           </div>
         </div>
