@@ -517,32 +517,68 @@
     /* Progress */
     .steps {
       display: flex;
-      gap: 6px;
+      gap: 0;
       margin-top: 28px;
+      align-items: center;
     }
-    .step-bar {
-      flex: 1;
-      height: 4px;
-      background: var(--border);
-      border-radius: 4px;
-      transition: background var(--transition);
-    }
-    .step-bar.active { background: var(--primary); }
-    .step-bar.completed { background: var(--primary-dark); }
-    .step-labels {
+    .step-node {
       display: flex;
-      justify-content: space-between;
-      margin-top: 12px;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      cursor: pointer;
+      z-index: 1;
     }
-    .step-label {
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--surface-warm);
+      color: var(--ink-faint);
+      border: 2px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .step-node.active .step-circle {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-glow);
+    }
+    .step-node.completed .step-circle {
+      background: var(--primary-dark);
+      color: #fff;
+      border-color: var(--primary-dark);
+      font-size: 0;
+    }
+    .step-node.completed .step-circle::after {
+      content: '\2713';
+      font-size: 14px;
+    }
+    .step-node .step-text {
       font-size: 12px;
       font-weight: 500;
       color: var(--ink-faint);
-      cursor: pointer;
       transition: color var(--transition);
     }
-    .step-label.active { color: var(--primary); font-weight: 600; }
-    .step-label.completed { color: var(--ink-secondary); }
+    .step-node.active .step-text { color: var(--primary); font-weight: 600; }
+    .step-node.completed .step-text { color: var(--ink-secondary); }
+    .step-connector {
+      flex: 1;
+      height: 2px;
+      background: var(--border);
+      margin: 0 -1px;
+      margin-bottom: 24px;
+      transition: background 0.3s ease;
+    }
+    .step-connector.completed {
+      background: var(--primary-dark);
+    }
 
     /* Form Steps */
     .form-step { display: none; }
@@ -934,7 +970,8 @@
       .timeline-desc { white-space: normal; }
       .form-nav { flex-direction: column-reverse; gap: 12px; }
       .form-nav .btn { width: 100%; justify-content: center; }
-      .step-labels { display: none; }
+      .step-text { font-size: 10px; }
+      .step-circle { width: 28px; height: 28px; font-size: 12px; }
       .review-field { flex-direction: column; gap: 2px; }
       .review-field-label { min-width: auto; }
       .nav-text { font-size: 17px; }
@@ -1079,9 +1116,8 @@
           Back to home
         </button>
         <h1>Application</h1>
-        <p>All fields marked with <span style="color:var(--primary)">*</span> are required. Navigate between sections before submitting.</p>
+        <p>All fields marked with <span style="color:#b45309">*</span> are required. Navigate between sections before submitting.</p>
         <div class="steps" id="stepBars"></div>
-        <div class="step-labels" id="stepLabels"></div>
       </div>
 
       <form id="appForm" novalidate>
@@ -1325,12 +1361,12 @@
 
     function renderSteps() {
       const barsEl = document.getElementById('stepBars');
-      const labelsEl = document.getElementById('stepLabels');
       barsEl.innerHTML = '';
-      labelsEl.innerHTML = '';
       for (let i = 0; i < totalSteps; i++) {
-        barsEl.innerHTML += `<div class="step-bar" data-step="${i}"></div>`;
-        labelsEl.innerHTML += `<span class="step-label" data-step="${i}" onclick="navigateStep(${i})">${STEP_NAMES[i]}</span>`;
+        barsEl.innerHTML += `<div class="step-node" data-step="${i}" onclick="navigateStep(${i})"><div class="step-circle">${i + 1}</div><span class="step-text">${STEP_NAMES[i]}</span></div>`;
+        if (i < totalSteps - 1) {
+          barsEl.innerHTML += `<div class="step-connector" data-connector="${i}"></div>`;
+        }
       }
     }
 
@@ -1339,15 +1375,14 @@
       document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
       const target = document.querySelector(`.form-step[data-step="${idx}"]`);
       if (target) target.classList.add('active');
-      document.querySelectorAll('.step-bar').forEach((bar, i) => {
-        bar.classList.remove('active', 'completed');
-        if (i < idx) bar.classList.add('completed');
-        if (i === idx) bar.classList.add('active');
+      document.querySelectorAll('.step-node').forEach((node, i) => {
+        node.classList.remove('active', 'completed');
+        if (i < idx) node.classList.add('completed');
+        if (i === idx) node.classList.add('active');
       });
-      document.querySelectorAll('.step-label').forEach((lbl, i) => {
-        lbl.classList.remove('active', 'completed');
-        if (i < idx) lbl.classList.add('completed');
-        if (i === idx) lbl.classList.add('active');
+      document.querySelectorAll('.step-connector').forEach((conn, i) => {
+        conn.classList.remove('completed');
+        if (i < idx) conn.classList.add('completed');
       });
       document.getElementById('prevBtn').style.visibility = idx === 0 ? 'hidden' : 'visible';
       if (idx === totalSteps - 1) {
