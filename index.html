@@ -264,33 +264,6 @@
       color: var(--ink-secondary);
     }
 
-    /* ── Photo Gallery ── */
-    .gallery {
-      padding: 64px 0;
-      border-top: 1px solid var(--border);
-    }
-    .gallery h2 {
-      font-family: var(--serif);
-      font-size: 26px;
-      font-weight: 600;
-      margin-bottom: 24px;
-      letter-spacing: -0.3px;
-    }
-    .gallery-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    .gallery-row img {
-      width: 100%;
-      height: 260px;
-      object-fit: cover;
-      border-radius: var(--radius-lg);
-    }
-    @media (max-width: 640px) {
-      .gallery-row { grid-template-columns: 1fr; }
-      .gallery-row img { height: 200px; }
-    }
 
     /* ── Info Sections ── */
     .info-section {
@@ -349,15 +322,17 @@
       line-height: 1.6;
     }
     .traits li::before {
-      content: '';
+      content: '\2726';
       position: absolute;
       left: 0;
-      top: 8px;
-      width: 8px;
-      height: 8px;
-      border-radius: 3px;
-      background: var(--primary);
-      opacity: 0.5;
+      top: 0;
+      font-size: 14px;
+      color: #b45309;
+      animation: starGlow 3s ease-in-out infinite;
+    }
+    @keyframes starGlow {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
     }
 
     /* Timeline */
@@ -376,12 +351,31 @@
       border-top: 1px solid var(--border);
     }
     .timeline-dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: var(--primary);
       flex-shrink: 0;
-      opacity: 0.6;
+      position: relative;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .timeline-dot::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: var(--primary);
+      opacity: 0;
+      animation: pulseRing 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 0.3; }
     }
     .timeline-date {
       font-size: 13px;
@@ -389,10 +383,12 @@
       color: var(--primary);
       min-width: 110px;
       flex-shrink: 0;
+      white-space: nowrap;
     }
     .timeline-desc {
       font-size: 14px;
       color: var(--ink-secondary);
+      white-space: nowrap;
     }
 
     /* FAQ */
@@ -935,6 +931,7 @@
       .field-row { grid-template-columns: 1fr; }
       .form-block { padding: 24px 20px; }
       .timeline-item { flex-wrap: wrap; }
+      .timeline-desc { white-space: normal; }
       .form-nav { flex-direction: column-reverse; gap: 12px; }
       .form-nav .btn { width: 100%; justify-content: center; }
       .step-labels { display: none; }
@@ -1028,13 +1025,6 @@
         </div>
       </section>
 
-      <section class="gallery">
-        <h2>Life at CES</h2>
-        <div class="gallery-row">
-          <img src="https://2025.connollycenter.com/assets/images/Entrepreneurship_Summit_4-11-25__146.jpg" alt="Summit networking and collaboration">
-          <img src="https://2025.connollycenter.com/assets/images/IMG_8308.jpeg" alt="Pitch competition presentation">
-        </div>
-      </section>
 
       <!-- FAQ -->
       <section class="faq-section">
