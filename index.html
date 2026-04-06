@@ -1358,12 +1358,7 @@
     // ── Supabase Setup ──
     const SUPABASE_URL = 'https://idehhphldnyssafbulgy.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkZWhocGhsZG55c3NhZmJ1bGd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTM4OTgsImV4cCI6MjA5MTA2OTg5OH0.ViZBkKZ-M2PnOuMwPfnMiPikWdlEIVfosgzj9ajEjzM';
-    let supabase;
-    try {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } catch (e) {
-      console.error('Supabase failed to initialize:', e);
-    }
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const STEP_NAMES = ['Basic Info', 'Experience', 'Essays', 'Review'];
     let currentStep = 0;
@@ -1570,7 +1565,7 @@
         const email = fd.get('email').trim().toLowerCase();
 
         // Check for duplicate submission
-        const { data: existing } = await supabase
+        const { data: existing } = await supabaseClient
           .from('applications')
           .select('id')
           .eq('email', email)
@@ -1591,11 +1586,11 @@
         const resumeFile = document.getElementById('resumeInput').files[0];
         if (resumeFile) {
           const resumePath = `${sanitizedName}/${timestamp}_resume_${resumeFile.name}`;
-          const { error: rErr } = await supabase.storage
+          const { error: rErr } = await supabaseClient.storage
             .from('application-files')
             .upload(resumePath, resumeFile);
           if (rErr) throw new Error('Resume upload failed: ' + rErr.message);
-          resumeUrl = supabase.storage.from('application-files').getPublicUrl(resumePath).data.publicUrl;
+          resumeUrl = supabaseClient.storage.from('application-files').getPublicUrl(resumePath).data.publicUrl;
         }
 
         const materialUrls = [];
@@ -1603,11 +1598,11 @@
         for (let i = 0; i < materialsFiles.length; i++) {
           const f = materialsFiles[i];
           const matPath = `${sanitizedName}/${timestamp}_material_${f.name}`;
-          const { error: mErr } = await supabase.storage
+          const { error: mErr } = await supabaseClient.storage
             .from('application-files')
             .upload(matPath, f);
           if (mErr) throw new Error('Material upload failed: ' + mErr.message);
-          materialUrls.push(supabase.storage.from('application-files').getPublicUrl(matPath).data.publicUrl);
+          materialUrls.push(supabaseClient.storage.from('application-files').getPublicUrl(matPath).data.publicUrl);
         }
 
         // Collect project links
@@ -1617,7 +1612,7 @@
         });
 
         // Insert application
-        const { error: insertErr } = await supabase.from('applications').insert({
+        const { error: insertErr } = await supabaseClient.from('applications').insert({
           first_name: fd.get('firstName').trim(),
           last_name: fd.get('lastName').trim(),
           email: email,
