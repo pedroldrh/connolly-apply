@@ -6,6 +6,7 @@
   <title>Apply — Connolly Entrepreneurship Society</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="apple-touch-icon" href="logo.png">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
@@ -810,6 +811,18 @@
       padding: 4px 10px;
       border-radius: 6px;
     }
+    .essay-prompt {
+      display: block;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.55;
+      margin-bottom: 10px;
+      padding: 14px 16px;
+      background: var(--primary-light);
+      border-left: 3px solid var(--primary);
+      border-radius: 0 8px 8px 0;
+    }
 
     /* Navigation Buttons */
     .form-nav {
@@ -1261,32 +1274,32 @@
 
             <div class="field">
               <div class="essay-label-row">
-                <label class="field-label">Essay 1 — TBD <span class="req">*</span></label>
+                <label class="field-label">Essay 1 — Field of Expertise <span class="req">*</span></label>
                 <span class="essay-badge">1 of 3</span>
               </div>
-              <span class="field-hint">Essay prompt will be posted soon. Use this space to draft your response.</span>
-              <textarea name="essay1" required data-max-words="300" placeholder="Write your response here..."></textarea>
-              <div class="word-counter" data-for="essay1">0 / 300 words</div>
+              <span class="essay-prompt">What is a field you understand better than most people your age, and where do you see the biggest opportunity for innovation within it?</span>
+              <textarea name="essay1" required data-max-words="250" placeholder="Write your response here..."></textarea>
+              <div class="word-counter" data-for="essay1">0 / 250 words</div>
             </div>
 
             <div class="field">
               <div class="essay-label-row">
-                <label class="field-label">Essay 2 — TBD <span class="req">*</span></label>
+                <label class="field-label">Essay 2 — Sustained Commitment <span class="req">*</span></label>
                 <span class="essay-badge">2 of 3</span>
               </div>
-              <span class="field-hint">Essay prompt will be posted soon. Use this space to draft your response.</span>
-              <textarea name="essay2" required data-max-words="300" placeholder="Write your response here..."></textarea>
-              <div class="word-counter" data-for="essay2">0 / 300 words</div>
+              <span class="essay-prompt">Describe a time you committed to something that required sustained effort over weeks or months.</span>
+              <textarea name="essay2" required data-max-words="250" placeholder="Write your response here..."></textarea>
+              <div class="word-counter" data-for="essay2">0 / 250 words</div>
             </div>
 
             <div class="field">
               <div class="essay-label-row">
-                <label class="field-label">Essay 3 — TBD <span class="req">*</span></label>
+                <label class="field-label">Essay 3 — $0 Startup <span class="req">*</span></label>
                 <span class="essay-badge">3 of 3</span>
               </div>
-              <span class="field-hint">Essay prompt will be posted soon. Use this space to draft your response.</span>
-              <textarea name="essay3" required data-max-words="300" placeholder="Write your response here..."></textarea>
-              <div class="word-counter" data-for="essay3">0 / 300 words</div>
+              <span class="essay-prompt">If you had to start a business tomorrow with $0, what would you do in the first 7 days? Be specific.</span>
+              <textarea name="essay3" required data-max-words="250" placeholder="Write your response here..."></textarea>
+              <div class="word-counter" data-for="essay3">0 / 250 words</div>
             </div>
           </div>
         </div>
@@ -1342,6 +1355,11 @@
   </footer>
 
   <script>
+    // ── Supabase Setup ──
+    const SUPABASE_URL = 'https://idehhphldnyssafbulgy.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkZWhocGhsZG55c3NhZmJ1bGd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTM4OTgsImV4cCI6MjA5MTA2OTg5OH0.ViZBkKZ-M2PnOuMwPfnMiPikWdlEIVfosgzj9ajEjzM';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const STEP_NAMES = ['Basic Info', 'Experience', 'Essays', 'Review'];
     let currentStep = 0;
     const totalSteps = STEP_NAMES.length;
@@ -1532,24 +1550,97 @@
     function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
 
     // Submit
-    document.getElementById('appForm').addEventListener('submit', e => {
+    document.getElementById('appForm').addEventListener('submit', async e => {
       e.preventDefault();
       for (let i = 0; i < totalSteps - 1; i++) {
         if (!validateStep(i)) { goToStep(i); return; }
       }
-      const fd = new FormData(e.target);
-      const data = {};
-      for (const [key, value] of fd.entries()) {
-        if (data[key]) {
-          if (Array.isArray(data[key])) data[key].push(value);
-          else data[key] = [data[key], value];
-        } else data[key] = value;
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+
+      try {
+        const fd = new FormData(e.target);
+        const email = fd.get('email').trim().toLowerCase();
+
+        // Check for duplicate submission
+        const { data: existing } = await supabase
+          .from('applications')
+          .select('id')
+          .eq('email', email)
+          .maybeSingle();
+
+        if (existing) {
+          alert('An application with this email has already been submitted.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Application';
+          return;
+        }
+
+        // Upload files
+        const timestamp = Date.now();
+        const sanitizedName = email.replace(/[^a-z0-9]/g, '_');
+
+        let resumeUrl = null;
+        const resumeFile = document.getElementById('resumeInput').files[0];
+        if (resumeFile) {
+          const resumePath = `${sanitizedName}/${timestamp}_resume_${resumeFile.name}`;
+          const { error: rErr } = await supabase.storage
+            .from('application-files')
+            .upload(resumePath, resumeFile);
+          if (rErr) throw new Error('Resume upload failed: ' + rErr.message);
+          resumeUrl = supabase.storage.from('application-files').getPublicUrl(resumePath).data.publicUrl;
+        }
+
+        const materialUrls = [];
+        const materialsFiles = document.getElementById('materialsInput').files;
+        for (let i = 0; i < materialsFiles.length; i++) {
+          const f = materialsFiles[i];
+          const matPath = `${sanitizedName}/${timestamp}_material_${f.name}`;
+          const { error: mErr } = await supabase.storage
+            .from('application-files')
+            .upload(matPath, f);
+          if (mErr) throw new Error('Material upload failed: ' + mErr.message);
+          materialUrls.push(supabase.storage.from('application-files').getPublicUrl(matPath).data.publicUrl);
+        }
+
+        // Collect project links
+        const projectLinks = [];
+        document.querySelectorAll('input[name="projectLinks"]').forEach(input => {
+          if (input.value.trim()) projectLinks.push(input.value.trim());
+        });
+
+        // Insert application
+        const { error: insertErr } = await supabase.from('applications').insert({
+          first_name: fd.get('firstName').trim(),
+          last_name: fd.get('lastName').trim(),
+          email: email,
+          class_year: fd.get('classYear'),
+          major: fd.get('major').trim(),
+          minor: fd.get('minor')?.trim() || null,
+          projects: fd.get('projects')?.trim() || null,
+          project_links: projectLinks.length ? projectLinks : null,
+          resume_url: resumeUrl,
+          material_urls: materialUrls.length ? materialUrls : null,
+          essay1: fd.get('essay1').trim(),
+          essay2: fd.get('essay2').trim(),
+          essay3: fd.get('essay3').trim(),
+        });
+
+        if (insertErr) throw new Error('Submission failed: ' + insertErr.message);
+
+        document.getElementById('appForm').style.display = 'none';
+        document.querySelector('.form-nav').style.display = 'none';
+        document.getElementById('confirmation').classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      } catch (err) {
+        console.error(err);
+        alert(err.message || 'Something went wrong. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Application';
       }
-      console.log('Application submitted:', data);
-      document.getElementById('appForm').style.display = 'none';
-      document.querySelector('.form-nav').style.display = 'none';
-      document.getElementById('confirmation').classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     renderSteps();
