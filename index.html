@@ -1582,10 +1582,14 @@
         const timestamp = Date.now();
         const sanitizedName = email.replace(/[^a-z0-9]/g, '_');
 
+        function safeFileName(name) {
+          return name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        }
+
         let resumeUrl = null;
         const resumeFile = document.getElementById('resumeInput').files[0];
         if (resumeFile) {
-          const resumePath = `${sanitizedName}/${timestamp}_resume_${resumeFile.name}`;
+          const resumePath = `${sanitizedName}/${timestamp}_resume_${safeFileName(resumeFile.name)}`;
           const { error: rErr } = await supabaseClient.storage
             .from('application-files')
             .upload(resumePath, resumeFile);
@@ -1597,7 +1601,7 @@
         const materialsFiles = document.getElementById('materialsInput').files;
         for (let i = 0; i < materialsFiles.length; i++) {
           const f = materialsFiles[i];
-          const matPath = `${sanitizedName}/${timestamp}_material_${f.name}`;
+          const matPath = `${sanitizedName}/${timestamp}_material_${safeFileName(f.name)}`;
           const { error: mErr } = await supabaseClient.storage
             .from('application-files')
             .upload(matPath, f);
