@@ -1358,7 +1358,12 @@
     // ── Supabase Setup ──
     const SUPABASE_URL = 'https://idehhphldnyssafbulgy.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkZWhocGhsZG55c3NhZmJ1bGd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTM4OTgsImV4cCI6MjA5MTA2OTg5OH0.ViZBkKZ-M2PnOuMwPfnMiPikWdlEIVfosgzj9ajEjzM';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let supabase;
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (e) {
+      console.error('Supabase failed to initialize:', e);
+    }
 
     const STEP_NAMES = ['Basic Info', 'Experience', 'Essays', 'Review'];
     let currentStep = 0;
