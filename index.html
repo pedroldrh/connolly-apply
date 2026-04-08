@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apply — Connolly Entrepreneurship Society</title>
+  <title>Apply | Connolly Entrepreneurship Society</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="apple-touch-icon" href="logo.png">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -1012,7 +1012,7 @@
         <div class="hero-content">
           <div class="hero-eyebrow">Spring 2026 Application</div>
           <h1 class="hero-title">Apply to the Connolly<br>Entrepreneurship <em>Society</em></h1>
-          <p class="hero-sub">We're looking for builders, thinkers, and ambitious students ready to turn ideas into reality. No experience necessary — just initiative.</p>
+          <p class="hero-sub">We're looking for builders, thinkers, and ambitious students ready to turn ideas into reality. No experience necessary, just initiative.</p>
           <div class="hero-cta-wrap">
             <div class="hero-cta-outer">
               <button class="hero-cta" onclick="showApplication()">
@@ -1037,8 +1037,29 @@
       </section>
 
       <section class="info-section">
+        <h2>Timeline</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">April 7</div>
+            <div class="timeline-desc">Applications open</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">May 4</div>
+            <div class="timeline-desc">Application deadline</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">TBD</div>
+            <div class="timeline-desc">Interviews with selected applicants</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="info-section">
         <h2>Who should apply?</h2>
-        <p>You don't need to have started a company. We're looking for students who are curious, driven, and eager to build things — whether that's a startup, a campus initiative, a creative project, or something entirely new.</p>
+        <p>You don't need to have started a company. We're looking for students who are curious, driven, and eager to build things, whether that's a startup, a campus initiative, a creative project, or something entirely new.</p>
         <ul class="traits">
           <li>You've built something on your own</li>
           <li>You're working on a business idea</li>
@@ -1049,32 +1070,6 @@
         </ul>
       </section>
 
-      <section class="info-section">
-        <h2>Timeline</h2>
-        <div class="timeline">
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-date">TBD</div>
-            <div class="timeline-desc">Applications open</div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-date">TBD</div>
-            <div class="timeline-desc">Application deadline</div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-date">TBD</div>
-            <div class="timeline-desc">Interviews with selected applicants</div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-date">TBD</div>
-            <div class="timeline-desc">Decisions released via email</div>
-          </div>
-        </div>
-      </section>
-
 
       <!-- FAQ -->
       <section class="faq-section">
@@ -1082,7 +1077,7 @@
         <div class="faq-list">
           <div class="faq-item">
             <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do I need entrepreneurial experience to apply?</button>
-            <div class="faq-a"><p>No. We value ambition, curiosity, and initiative over a polished resume. If you've ever built something — a website, a club, a side project — or simply want to start, you belong here.</p></div>
+            <div class="faq-a"><p>No. We value ambition, curiosity, and initiative over a polished resume. If you've ever built something (a website, a club, a side project) or simply want to start, you belong here.</p></div>
           </div>
           <div class="faq-item">
             <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What is the time commitment?</button>
@@ -1198,19 +1193,19 @@
               </div>
               <div>
                 <div class="form-block-title">Projects &amp; Experience</div>
-                <div class="form-block-desc">Tell us what you've built, created, or worked on — big or small.</div>
+                <div class="form-block-desc">Tell us what you've built, created, or worked on, big or small.</div>
               </div>
             </div>
 
             <div class="field">
               <label class="field-label">Describe any projects you've worked on</label>
-              <span class="field-hint">Websites, businesses, nonprofits, 3D printing projects, products, organizations, apps, research, initiatives — anything you've built or helped build.</span>
+              <span class="field-hint">Websites, businesses, nonprofits, 3D printing projects, products, organizations, apps, research, initiatives, anything you've built or helped build.</span>
               <textarea name="projects" placeholder="Describe your projects, what your role was, and what you accomplished."></textarea>
             </div>
 
             <div class="field">
               <label class="field-label">Project Links</label>
-              <span class="field-hint">Add links to anything you'd like us to see — websites, GitHub, portfolios, press, etc.</span>
+              <span class="field-hint">Add links to anything you'd like us to see: websites, GitHub, portfolios, press, etc.</span>
               <div class="dynamic-list" id="linksList">
                 <div class="dynamic-row">
                   <input type="url" name="projectLinks" placeholder="https://">
@@ -1222,7 +1217,7 @@
 
             <div class="field">
               <label class="field-label">Supporting Materials</label>
-              <span class="field-hint">Upload anything relevant — pitch decks, demos, mockups, etc. (PDF, PNG, JPG, max 10MB)</span>
+              <span class="field-hint">Upload anything relevant: pitch decks, demos, mockups, etc. (PDF, PNG, JPG, max 10MB)</span>
               <div class="upload-zone" id="materialsZone" onclick="document.getElementById('materialsInput').click()">
                 <input type="file" id="materialsInput" accept=".pdf,.png,.jpg,.jpeg" multiple onchange="handleUpload(this, 'materialsZone', 'materialsName')">
                 <div class="upload-icon">
@@ -1274,7 +1269,7 @@
 
             <div class="field">
               <div class="essay-label-row">
-                <label class="field-label">Essay 1 — Field of Expertise <span class="req">*</span></label>
+                <label class="field-label">Essay 1: Field of Expertise <span class="req">*</span></label>
                 <span class="essay-badge">1 of 3</span>
               </div>
               <span class="essay-prompt">What is a field you understand better than most people your age, and where do you see the biggest opportunity for innovation within it?</span>
@@ -1284,7 +1279,7 @@
 
             <div class="field">
               <div class="essay-label-row">
-                <label class="field-label">Essay 2 — Sustained Commitment <span class="req">*</span></label>
+                <label class="field-label">Essay 2: Sustained Commitment <span class="req">*</span></label>
                 <span class="essay-badge">2 of 3</span>
               </div>
               <span class="essay-prompt">Describe a time you committed to something that required sustained effort over weeks or months.</span>
@@ -1294,7 +1289,7 @@
 
             <div class="field">
               <div class="essay-label-row">
-                <label class="field-label">Essay 3 — $0 Startup <span class="req">*</span></label>
+                <label class="field-label">Essay 3: $0 Startup <span class="req">*</span></label>
                 <span class="essay-badge">3 of 3</span>
               </div>
               <span class="essay-prompt">If you had to start a business tomorrow with $0, what would you do in the first 7 days? Be specific.</span>
@@ -1350,7 +1345,7 @@
   <footer>
     <div class="container">
       <p>Connolly Entrepreneurship Society &middot; Washington and Lee University</p>
-      <p style="margin-top:6px"><a href="mailto:plironderobles@mail.wlu.edu">plironderobles@mail.wlu.edu</a></p>
+      <p style="margin-top:6px">Questions? Email <a href="mailto:plironderobles@mail.wlu.edu">plironderobles@mail.wlu.edu</a></p>
     </div>
   </footer>
 
@@ -1538,7 +1533,7 @@
       html += `<div class="review-section"><div class="review-section-title">Essays <span class="review-edit-link" onclick="goToStep(2)">Edit</span></div>`;
       ['essay1','essay2','essay3'].forEach((key,i) => {
         const val = fd.get(key);
-        html += `<div class="review-essay"><div class="review-essay-label">Essay ${i+1} — TBD</div><div class="review-essay-body">${val ? escapeHtml(val) : '<span style="color:var(--ink-faint);font-style:italic">Not yet written</span>'}</div></div>`;
+        html += `<div class="review-essay"><div class="review-essay-label">Essay ${i+1}: TBD</div><div class="review-essay-body">${val ? escapeHtml(val) : '<span style="color:var(--ink-faint);font-style:italic">Not yet written</span>'}</div></div>`;
       });
       html += `</div>`;
       document.getElementById('reviewContent').innerHTML = html;

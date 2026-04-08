@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connolly Apply | QR Code</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f7f7f7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    }
+    #info {
+      margin-top: 24px;
+      font-size: 14px;
+      color: #888;
+      letter-spacing: 0.2px;
+    }
+    canvas {
+      cursor: pointer;
+      max-width: 100vw;
+      max-height: 80vh;
+    }
+    #fallback {
+      display: none;
+      text-align: center;
+      padding: 40px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="800" height="800"></canvas>
+  <div id="info">Click to toggle 3D / flat view</div>
+  <div id="fallback">
+    <p>WebGPU is not supported in this browser.</p>
+    <p>Try Chrome 113+ or Edge 113+.</p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script>
+'use strict';
+
+// ============================================
+// CONSTANTS
+// ============================================
+const QR_CONTENT = 'https://connolly-apply.vercel.app';
+const BLOCK_SIZE = 0.0245;
+const CUBE_HEIGHT = BLOCK_SIZE;
+const TRUNK_RADIUS = 2.5;
+const TRUNK_LAYERS = 12;
+const MAX_CANOPY_LAYERS = 12;
+const CANOPY_OUTER_RADIUS_FACTOR = 0.46;
+const MAX_GRID_SIZE = 41;
+const MAX_BLOCKS = MAX_GRID_SIZE * MAX_GRID_SIZE * 18;
+const LERP_SPEED = 4.0;
+
+// Block types
+const BlockType = { Dirt: 0, CherryBlossom: 1, Trunk: 2, Grass: 3, FallenPetals: 4 };
+
+// ============================================
+// QR MATRIX GENERATION
+// ============================================
+function generateQRMatrix(content) {
+  try {
+    const qr = qrcode(0, 'M');
+    qr.addData(content);
+    qr.make();
+    const size = qr.getModuleCount();
+    const matrix = [];
+    for (let y = 0; y < size; y++) {
+      const row = [];
+      for (let x = 0; x < size; x++) {
+        row.push(qr.isDark(y, x));
+      }
+      matrix.push(row);
+    }
+    return matrix;
+  } catch (e) {
+    console.error('QR generation failed:', e);
+    return [];
+  }
+}
+
+// ============================================
+// BLOCK DATA GENERATION
+// ============================================
+function pseudoRandom(col, row, seed = 0) {
+  const s = Math.sin(col * 127.1 + row * 311.7 + seed * 43.7) * 43758.5;
+  return s - Math.floor(s);
+}
+
+function generateBlockData(qrMatrix) {
+  const gridSize = qrMatrix.length;
+  const cx = gridSize / 2;
+  const cy = gridSize / 2;
+
+  const positions = [];
+  const heights = [];
+  const baseY = [];
+  const types = [];
+
+  const canopyBaseHeight = TRUNK_LAYERS * CUBE_HEIGHT;
+  const canopyOuterRadius = gridSize * CANOPY_OUTER_RADIUS_FACTOR;
+
+  let blockCount = 0;
+
+  // First pass: ground blocks
+  for (let row = 0; row < gridSize; row++) {
+    for (let col = 0; col < gridSize; col++) {
+      const isQrDark = qrMatrix[row][col];
+      const dx = col - cx;
+      const dy = row - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      positions.push(col, row, 0, 0);
+      heights.push(CUBE_HEIGHT);
+      baseY.push(0);
+
+      if (!isQrDark) {
+        types.push(BlockType.Dirt);
+      } else if (dist < TRUNK_RADIUS) {
+        types.push(BlockType.Trunk);
+      } else if (dist >= canopyOuterRadius) {
+        types.push(BlockType.Grass);
+      } else {
+        types.push(BlockType.FallenPetals);
+      }
+      blockCount++;
+    }
+  }
+
+  // Second pass: trunk blocks stacked
+  for (let row = 0; row < gridSize; row++) {
+    for (let col = 0; col < gridSize; col++) {
+      const isQrDark = qrMatrix[row][col];
+      if (!isQrDark) continue;
+
+      const dx = col - cx;
+      const dy = row - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < TRUNK_RADIUS) {
+        for (let layer = 1; layer < TRUNK_LAYERS; layer++) {
+          positions.push(col, row, 0, 0);
+          heights.push(CUBE_HEIGHT);
+          baseY.push(layer * CUBE_HEIGHT);
+          types.push(BlockType.Trunk);
+          blockCount++;
+        }
+      }
+    }
+  }
+
+  // Third pass: canopy foliage
+  for (let row = 0; row < gridSize; row++) {
+    for (let col = 0; col < gridSize; col++) {
+      const isQrDark = qrMatrix[row][col];
+      if (!isQrDark) continue;
+
+      const dx = col - cx;
+      const dy = row - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < canopyOuterRadius) {
+        const t = 1 - dist / canopyOuterRadius;
+        const layersHere = Math.max(3, Math.round(MAX_CANOPY_LAYERS * (0.25 + 0.75 * t * t)));
+
+        for (let layer = 0; layer < layersHere; layer++) {
+          const layerY = canopyBaseHeight + layer * CUBE_HEIGHT;
+          const domeOffset = Math.floor(t * 3) * CUBE_HEIGHT;
+
+          positions.push(col, row, 0, 0);
+          heights.push(CUBE_HEIGHT);
+          baseY.push(layerY + domeOffset);
+          types.push(BlockType.CherryBlossom);
+          blockCount++;
+        }
+
+        const extraCount = Math.floor(pseudoRandom(col, row, 500) * 4);
+        for (let e = 0; e < extraCount; e++) {
+          const extraLayer = layersHere + e;
+          const domeOffset = Math.floor(t * 3) * CUBE_HEIGHT;
+
+          positions.push(col, row, 0, 0);
+          heights.push(CUBE_HEIGHT);
+          baseY.push(canopyBaseHeight + extraLayer * CUBE_HEIGHT + domeOffset);
+          types.push(BlockType.CherryBlossom);
+          blockCount++;
+        }
+      }
+    }
+  }
+
+  return { positions, heights, baseY, types, gridSize, numBlocks: blockCount };
+}
+
+// ============================================
+// SHADERS
+// ============================================
+const uniformsStruct = `
+struct Uniforms {
+  aspectRatio: f32,
+  time: f32,
+  blockCount: f32,
+  progress: f32,
+  gridSize: f32,
+  _pad1: f32,
+  _pad2: f32,
+  _pad3: f32,
+}
+`;
+
+const skyVertexShader = `
+${uniformsStruct}
+struct SkyOut {
+  @builtin(position) position: vec4f,
+  @location(0) uv: vec2f,
+}
+@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@vertex
+fn main(@builtin(vertex_index) vi: u32) -> SkyOut {
+  var tri = array<vec2f, 3>(vec2f(-1.0, -1.0), vec2f(3.0, -1.0), vec2f(-1.0, 3.0));
+  let p = tri[vi];
+  var o: SkyOut;
+  o.position = vec4f(p, 1.0, 1.0);
+  o.uv = vec2f(p.x * 0.5 + 0.5, 0.5 - p.y * 0.5);
+  return o;
+}
+`;
+
+const skyFragmentShader = `
+${uniformsStruct}
+@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@fragment
+fn main(@location(0) uv: vec2f) -> @location(0) vec4f {
+  return vec4f(0.969, 0.969, 0.969, 1.0);
+}
+`;
+
+const shadowVertexShader = `
+${uniformsStruct}
+struct ShadowOut {
+  @builtin(position) position: vec4f,
+  @location(0) uv: vec2f,
+}
+@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@vertex
+fn main(@builtin(vertex_index) vi: u32) -> ShadowOut {
+  var quadVerts = array<vec2f, 6>(
+    vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(-1.0, 1.0),
+    vec2f(-1.0, 1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0)
+  );
+  let qv = quadVerts[vi];
+  var o: ShadowOut;
+  o.uv = qv * 0.5 + 0.5;
+  let gridSize = uniforms.gridSize;
+  let blockSize = 0.0245;
+  let halfGrid = gridSize * blockSize * 0.5;
+  let shadowScale = 0.85;
+  let progress = uniforms.progress;
+  let shadowHeight = 0.48;
+  let lightDirXZ = vec2f(-0.5, -0.5);
+  let shadowOffset = -lightDirXZ * shadowHeight * 0.35 * (1.0 - progress);
+  let localX = qv.x * halfGrid * shadowScale + shadowOffset.x;
+  let localY = -shadowHeight;
+  let localZ = qv.y * halfGrid * shadowScale + shadowOffset.y;
+  let isoAngleY = mix(0.78, 0.0, progress);
+  let isoAngleX = mix(-0.55, -1.5708, progress);
+  let cy2 = cos(isoAngleY); let sy2 = sin(isoAngleY);
+  let cx2 = cos(isoAngleX); let sx2 = sin(isoAngleX);
+  let ry_x = localX * cy2 - localZ * sy2;
+  let ry_z = localX * sy2 + localZ * cy2;
+  let rx_y = localY * cx2 - ry_z * sx2;
+  let rx_z = localY * sx2 + ry_z * cx2;
+  let viewScale = mix(1.6, 2.1, progress);
+  let ar = uniforms.aspectRatio;
+  let scaleX = viewScale / max(ar, 1.0);
+  let scaleY = viewScale / max(1.0 / ar, 1.0);
+  let yOffsetScene = mix(0.0, 0.08, progress);
+  let xOffsetScene = mix(0.0, 0.015, progress);
+  o.position = vec4f((ry_x + xOffsetScene) * scaleX, (rx_y + yOffsetScene) * scaleY, 0.99, 1.0);
+  return o;
+}
+`;
+
+const shadowFragmentShader = `
+${uniformsStruct}
+@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@fragment
+fn main(@location(0) uv: vec2f) -> @location(0) vec4f {
+  let centered = uv * 2.0 - 1.0;
+  let dist = length(centered);
+  let shadowStrength = 0.08;
+  let falloff = exp(-dist * dist * 2.5);
+  let alpha = shadowStrength * falloff;
+  let shadowColor = vec3f(0.1, 0.12, 0.15);
+  return vec4f(shadowColor * alpha, alpha);
+}
+`;
+
+const blocksVertexShader = `
+${uniformsStruct}
+struct BlockOutput {
+  @builtin(position) position: vec4f,
+  @location(0) uv: vec2f,
+  @location(1) faceNx: f32,
+  @location(2) faceNy: f32,
+  @location(3) faceNz: f32,
+  @location(4) blockType: f32,
+  @location(5) blockH: f32,
+  @location(6) col: f32,
+  @location(7) row: f32,
+  @location(8) layer: f32,
+}
+@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@group(0) @binding(1) var<storage, read> blockTypes: array<u32>;
+@group(0) @binding(2) var<storage, read> blockPositions: array<vec4f>;
+@group(0) @binding(3) var<storage, read> blockHeights: array<f32>;
+@group(0) @binding(4) var<storage, read> blockBaseY: array<f32>;
+
+@vertex
+fn main(@builtin(vertex_index) vertexIndex: u32) -> BlockOutput {
+  var output: BlockOutput;
+  let blockIdx = vertexIndex / 36u;
+  let localVertIdx = vertexIndex % 36u;
+  let faceIdx = localVertIdx / 6u;
+  let vertIdx = localVertIdx % 6u;
+  let blockCount = u32(uniforms.blockCount);
+  if (blockIdx >= blockCount) {
+    output.position = vec4f(0.0, 0.0, -10.0, 1.0);
+    return output;
+  }
+  let posData = blockPositions[blockIdx];
+  let col = posData.x;
+  let row = posData.y;
+  output.col = col;
+  output.row = row;
+  output.layer = blockBaseY[blockIdx] / 0.0245;
+  let gridSize = uniforms.gridSize;
+  let blockSize = 0.0245;
+  let halfGrid = gridSize * blockSize * 0.5;
+  let cubeSize = blockSize;
+  let baseX = col * blockSize - halfGrid;
+  let baseY = blockBaseY[blockIdx];
+  let baseZ = row * blockSize - halfGrid;
+  let h = cubeSize;
+  output.blockH = h;
+  let typePacked = blockTypes[blockIdx];
+  output.blockType = f32(typePacked);
+  let quadVerts = array<vec2f, 6>(
+    vec2f(0.0, 0.0), vec2f(1.0, 0.0), vec2f(0.0, 1.0),
+    vec2f(0.0, 1.0), vec2f(1.0, 0.0), vec2f(1.0, 1.0)
+  );
+  let qv = quadVerts[vertIdx];
+  let hw = cubeSize * 0.5;
+  let hd = cubeSize * 0.5;
+  var localPos = vec3f(0.0);
+  var normal = vec3f(0.0);
+  var swayX = 0.0;
+  var swayZ = 0.0;
+  if (typePacked == 1u && h > 0.15) {
+    let time = uniforms.time;
+    swayX = sin(time * 0.8 + col * 0.3 + row * 0.2) * 0.002 * h;
+    swayZ = sin(time * 0.6 + col * 0.2 + row * 0.4) * 0.0015 * h;
+  }
+  if (faceIdx == 0u) {
+    localPos = vec3f(baseX + (qv.x - 0.5) * cubeSize + swayX, baseY + h, baseZ + (qv.y - 0.5) * cubeSize + swayZ);
+    normal = vec3f(0.0, 1.0, 0.0);
+  } else if (faceIdx == 1u) {
+    localPos = vec3f(baseX + (qv.x - 0.5) * cubeSize, baseY, baseZ + (0.5 - qv.y) * cubeSize);
+    normal = vec3f(0.0, -1.0, 0.0);
+  } else if (faceIdx == 2u) {
+    localPos = vec3f(baseX + (qv.x - 0.5) * cubeSize + swayX * qv.y, baseY + qv.y * h, baseZ + hd + swayZ * qv.y);
+    normal = vec3f(0.0, 0.0, 1.0);
+  } else if (faceIdx == 3u) {
+    localPos = vec3f(baseX + (0.5 - qv.x) * cubeSize + swayX * qv.y, baseY + qv.y * h, baseZ - hd + swayZ * qv.y);
+    normal = vec3f(0.0, 0.0, -1.0);
+  } else if (faceIdx == 4u) {
+    localPos = vec3f(baseX + hw + swayX * qv.y, baseY + qv.y * h, baseZ + (qv.x - 0.5) * cubeSize + swayZ * qv.y);
+    normal = vec3f(1.0, 0.0, 0.0);
+  } else {
+    localPos = vec3f(baseX - hw + swayX * qv.y, baseY + qv.y * h, baseZ + (0.5 - qv.x) * cubeSize + swayZ * qv.y);
+    normal = vec3f(-1.0, 0.0, 0.0);
+  }
+  output.uv = qv;
+  output.faceNx = normal.x;
+  output.faceNy = normal.y;
+  output.faceNz = normal.z;
+  let progress = uniforms.progress;
+  let isoAngleY = mix(0.78, 0.0, progress);
+  let isoAngleX = mix(-0.55, -1.5708, progress);
+  let cy2 = cos(isoAngleY); let sy2 = sin(isoAngleY);
+  let cx2 = cos(isoAngleX); let sx2 = sin(isoAngleX);
+  let ry_x = localPos.x * cy2 - localPos.z * sy2;
+  let ry_z = localPos.x * sy2 + localPos.z * cy2;
+  let rx_y = localPos.y * cx2 - ry_z * sx2;
+  let rx_z = localPos.y * sx2 + ry_z * cx2;
+  let viewScale = mix(1.6, 2.1, progress);
+  let ar = uniforms.aspectRatio;
+  let scaleX = viewScale / max(ar, 1.0);
+  let scaleY = viewScale / max(1.0 / ar, 1.0);
+  let yOffsetScene = mix(0.0, 0.08, progress);
+  let xOffsetScene = mix(0.0, 0.015, progress);
+  output.position = vec4f(
+    (ry_x + xOffsetScene) * scaleX,
+    (rx_y + yOffsetScene) * scaleY,
+    rx_z * 0.01 + 0.5,
+    1.0
+  );
+  return output;
+}
+`;
+
+const blocksFragmentShader = `
+${uniformsStruct}
+struct BlockInput {
+  @location(0) uv: vec2f,
+  @location(1) faceNx: f32,
+  @location(2) faceNy: f32,
+  @location(3) faceNz: f32,
+  @location(4) blockType: f32,
+  @location(5) blockH: f32,
+  @location(6) col: f32,
+  @location(7) row: f32,
+  @location(8) layer: f32,
+}
+@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+
+fn acesFilm(x: vec3f) -> vec3f {
+  let a = 2.51; let b = 0.03; let c = 2.43; let d = 0.59; let e = 0.14;
+  return clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3f(0.0), vec3f(1.0));
+}
+
+@fragment
+fn main(input: BlockInput) -> @location(0) vec4f {
+  let uv = input.uv;
+  let N = normalize(vec3f(input.faceNx, input.faceNy, input.faceNz));
+  let blockType = i32(input.blockType + 0.5);
+  let progress = uniforms.progress;
+
+  let dirtLight = vec3f(1.0, 0.98, 0.94);
+  let dirtMid = vec3f(0.96, 0.94, 0.88);
+  let dirtDark = vec3f(0.92, 0.88, 0.82);
+  let sakuraLight = vec3f(0.70, 0.25, 0.38);
+  let sakuraMid = vec3f(0.58, 0.18, 0.30);
+  let sakuraDeep = vec3f(0.46, 0.12, 0.24);
+  let sakuraRich = vec3f(0.36, 0.07, 0.18);
+  let barkLight = vec3f(0.34, 0.18, 0.07);
+  let barkMid = vec3f(0.26, 0.13, 0.05);
+  let barkDark = vec3f(0.20, 0.09, 0.03);
+  let barkDeep = vec3f(0.14, 0.06, 0.02);
+  let grassDark = vec3f(0.05, 0.18, 0.04);
+  let grassMid = vec3f(0.07, 0.28, 0.05);
+  let grassBright = vec3f(0.12, 0.38, 0.08);
+
+  let sunDir = normalize(vec3f(-0.5, 0.8, -0.5));
+  let sunCol = vec3f(1.150000, 1.050000, 0.950000);
+  let ambient = vec3f(0.35, 0.38, 0.45);
+  let skyFill = vec3f(0.850000, 0.900000, 0.950000);
+  let bounce = vec3f(0.500000, 0.650000, 0.420000);
+
+  let NdSun = max(dot(N, sunDir), 0.0);
+  let NdUp = max(dot(N, vec3f(0.0, 1.0, 0.0)), 0.0);
+
+  let layer = input.layer;
+  let seed = vec2f(input.col, input.row);
+  let blockSeed = seed.x * 17.3 + seed.y * 31.1 + layer * 73.7;
+  let noise1 = fract(sin(blockSeed) * 43758.5);
+  let noise2 = fract(sin(blockSeed * 1.7 + 127.1) * 43758.5);
+  let noise3 = fract(sin(blockSeed * 2.3 + 311.7) * 43758.5);
+
+  let gridSize = uniforms.gridSize;
+  let cx = gridSize * 0.5;
+  let cy = gridSize * 0.5;
+  let shadowOffsetX = 1.5;
+  let shadowOffsetY = 1.5;
+  let dx = input.col - (cx + shadowOffsetX);
+  let dy = input.row - (cy + shadowOffsetY);
+  let distFromShadowCenter = sqrt(dx * dx + dy * dy);
+  let canopyRadius = gridSize * 0.46;
+  let trunkRadius = 2.5;
+  let shadowT = 1.0 - smoothstep(trunkRadius, canopyRadius, distFromShadowCenter);
+  let treeShadow = 1.0 - shadowT * 0.35;
+
+  let maxCanopyLayer = 15.0;
+  let layerRatio = min(layer / maxCanopyLayer, 1.0);
+  let canopyAO = 0.65 + layerRatio * 0.35;
+
+  var albedo = vec3f(0.5);
+
+  if (input.faceNy > 0.5) {
+    let topWarmTint = vec3f(1.1, 1.08, 1.02);
+    if (blockType == 0) {
+      var dirtColor = dirtMid;
+      let t = noise1;
+      if (t < 0.5) { dirtColor = mix(dirtLight, dirtMid, t / 0.5); }
+      else { dirtColor = mix(dirtMid, dirtDark, (t - 0.5) / 0.5); }
+      let shift = (noise2 - 0.5) * 0.1;
+      dirtColor = dirtColor * (1.0 + shift) * treeShadow;
+      albedo = dirtColor * topWarmTint;
+    } else if (blockType == 1) {
+      var cherryColor = sakuraMid;
+      let t = noise1;
+      if (t < 0.33) { cherryColor = mix(sakuraLight, sakuraMid, t / 0.33); }
+      else if (t < 0.66) { cherryColor = mix(sakuraMid, sakuraDeep, (t - 0.33) / 0.33); }
+      else { cherryColor = mix(sakuraDeep, sakuraRich, (t - 0.66) / 0.34); }
+      let shift = (noise2 - 0.5) * 0.15;
+      cherryColor = cherryColor * (1.0 + shift);
+      let edgeX = min(uv.x, 1.0 - uv.x);
+      let edgeY = min(uv.y, 1.0 - uv.y);
+      let edgeDist = min(edgeX, edgeY);
+      let roundedEdge = smoothstep(0.0, 0.12, edgeDist);
+      let edgeDarken = mix(0.88, 1.0, roundedEdge);
+      let finalEdge = mix(edgeDarken, 1.0, progress);
+      albedo = cherryColor * topWarmTint * canopyAO * finalEdge;
+    } else if (blockType == 2) {
+      var barkColor = barkMid;
+      let t = noise1;
+      if (t < 0.33) { barkColor = mix(barkLight, barkMid, t / 0.33); }
+      else if (t < 0.66) { barkColor = mix(barkMid, barkDark, (t - 0.33) / 0.33); }
+      else { barkColor = mix(barkDark, barkDeep, (t - 0.66) / 0.34); }
+      let shift = (noise2 - 0.5) * 0.2;
+      barkColor = barkColor * (1.0 + shift);
+      let trunkMaxLayer = 12.0;
+      let heightRatio = min(layer / trunkMaxLayer, 1.0);
+      let aoShadow = 0.6 + heightRatio * 0.4;
+      let edgeX = min(uv.x, 1.0 - uv.x);
+      let edgeY = min(uv.y, 1.0 - uv.y);
+      let edgeDist = min(edgeX, edgeY);
+      let cornerDist = length(vec2f(0.5 - abs(uv.x - 0.5), 0.5 - abs(uv.y - 0.5)));
+      let roundedEdge = smoothstep(0.0, 0.18, edgeDist) * smoothstep(0.25, 0.5, cornerDist);
+      let edgeAO = mix(0.55, 1.0, roundedEdge);
+      albedo = barkColor * aoShadow * edgeAO * topWarmTint;
+    } else if (blockType == 3) {
+      let grassBrown = vec3f(0.28, 0.25, 0.12);
+      let grassOlive = vec3f(0.32, 0.35, 0.15);
+      var grassColor = grassMid;
+      let t = noise1;
+      if (t < 0.3) { grassColor = mix(grassBright, grassMid, t / 0.3); }
+      else if (t < 0.6) { grassColor = mix(grassMid, grassDark, (t - 0.3) / 0.3); }
+      else if (t < 0.8) { grassColor = mix(grassDark, grassBrown, (t - 0.6) / 0.2); }
+      else { grassColor = mix(grassBrown, grassOlive, (t - 0.8) / 0.2); }
+      let shift = (noise2 - 0.5) * 0.2;
+      grassColor = grassColor * (1.0 + shift);
+      albedo = grassColor * topWarmTint;
+    } else {
+      let brownLight = vec3f(0.52, 0.42, 0.30);
+      let brownDark2 = vec3f(0.42, 0.32, 0.22);
+      let greenLight = vec3f(0.38, 0.48, 0.28);
+      let greenDark = vec3f(0.32, 0.42, 0.24);
+      var fallenColor = brownLight;
+      if (noise1 < 0.5) { fallenColor = mix(brownLight, brownDark2, noise2); }
+      else { fallenColor = mix(greenLight, greenDark, noise2); }
+      let shift = (noise2 - 0.5) * 0.15;
+      fallenColor = fallenColor * (1.0 + shift) * treeShadow;
+      albedo = fallenColor * topWarmTint;
+    }
+  } else if (abs(input.faceNz) > 0.5 || abs(input.faceNx) > 0.5) {
+    let faceN = normalize(vec3f(input.faceNx, input.faceNy, input.faceNz));
+    let sunLight = max(dot(faceN, sunDir), 0.0);
+    let shade = 0.3 + sunLight * 0.65;
+    let tint = vec3f(0.95, 0.95, 0.98);
+    if (blockType == 0) {
+      var dirtColor = dirtMid;
+      let t = noise1;
+      if (t < 0.33) { dirtColor = mix(dirtLight, dirtMid, t / 0.33); }
+      else if (t < 0.66) { dirtColor = mix(dirtMid, dirtDark, (t - 0.33) / 0.33); }
+      else { dirtColor = dirtDark * (1.0 - (t - 0.66) * 0.3); }
+      let shift = (noise2 - 0.5) * 0.2;
+      dirtColor = dirtColor * (1.0 + shift);
+      albedo = dirtColor * shade * tint;
+    } else if (blockType == 1) {
+      var cherryColor = sakuraMid;
+      let t = noise1;
+      if (t < 0.33) { cherryColor = mix(sakuraLight, sakuraMid, t / 0.33); }
+      else if (t < 0.66) { cherryColor = mix(sakuraMid, sakuraDeep, (t - 0.33) / 0.33); }
+      else { cherryColor = mix(sakuraDeep, sakuraRich, (t - 0.66) / 0.34); }
+      let shift = (noise2 - 0.5) * 0.25;
+      cherryColor = cherryColor * (1.0 + shift);
+      let edgeX = min(uv.x, 1.0 - uv.x);
+      let edgeY = min(uv.y, 1.0 - uv.y);
+      let edgeDist = min(edgeX, edgeY);
+      let roundedEdge = smoothstep(0.0, 0.12, edgeDist);
+      let edgeDarken = mix(0.7, 1.0, roundedEdge);
+      albedo = cherryColor * shade * tint * canopyAO * edgeDarken;
+    } else if (blockType == 2) {
+      var barkColor = barkMid;
+      let t = noise1;
+      if (t < 0.33) { barkColor = mix(barkLight, barkMid, t / 0.33); }
+      else if (t < 0.66) { barkColor = mix(barkMid, barkDark, (t - 0.33) / 0.33); }
+      else { barkColor = mix(barkDark, barkDeep, (t - 0.66) / 0.34); }
+      let shift = (noise2 - 0.5) * 0.2;
+      barkColor = barkColor * (1.0 + shift);
+      let trunkMaxLayer = 12.0;
+      let heightRatio = min(layer / trunkMaxLayer, 1.0);
+      let aoShadow = 0.55 + heightRatio * 0.45;
+      let edgeX = min(uv.x, 1.0 - uv.x);
+      let edgeY = min(uv.y, 1.0 - uv.y);
+      let edgeDist = min(edgeX, edgeY);
+      let roundedEdge = smoothstep(0.0, 0.15, edgeDist);
+      let edgeAO = mix(0.5, 1.0, roundedEdge);
+      let verticalAO = 0.8 + uv.y * 0.2;
+      albedo = barkColor * aoShadow * verticalAO * edgeAO * shade * tint;
+    } else if (blockType == 3) {
+      let grassBrown = vec3f(0.28, 0.25, 0.12);
+      let grassOlive = vec3f(0.32, 0.35, 0.15);
+      var grassColor = grassMid;
+      let t = noise1;
+      if (t < 0.3) { grassColor = mix(grassBright, grassMid, t / 0.3); }
+      else if (t < 0.6) { grassColor = mix(grassMid, grassDark, (t - 0.6) / 0.3); }
+      else if (t < 0.8) { grassColor = mix(grassDark, grassBrown, (t - 0.6) / 0.2); }
+      else { grassColor = mix(grassBrown, grassOlive, (t - 0.8) / 0.2); }
+      let shift = (noise2 - 0.5) * 0.2;
+      grassColor = grassColor * (1.0 + shift);
+      albedo = grassColor * shade * tint;
+    } else {
+      let fallenBrown = vec3f(0.45, 0.35, 0.26);
+      let fallenGreen = vec3f(0.35, 0.42, 0.24);
+      var fallenColor = mix(fallenBrown, fallenGreen, noise1 * 0.6);
+      let shift = (noise2 - 0.5) * 0.15;
+      fallenColor = fallenColor * (1.0 + shift);
+      albedo = fallenColor * shade * tint;
+    }
+  } else {
+    let bottomTint = vec3f(0.6, 0.62, 0.7);
+    let fallenBottom = vec3f(0.45, 0.42, 0.32);
+    if (blockType == 0) { albedo = dirtDark * 0.5 * bottomTint; }
+    else if (blockType == 1) { albedo = sakuraDeep * 0.5 * bottomTint; }
+    else if (blockType == 2) { albedo = barkDark * 0.5 * bottomTint; }
+    else if (blockType == 3) { albedo = grassDark * 0.5 * bottomTint; }
+    else { albedo = fallenBottom * 0.6 * bottomTint; }
+  }
+
+  let diffuse = albedo * (ambient + sunCol * NdSun * 0.65 + skyFill * NdUp * 0.25 + bounce * 0.2);
+  var hdr = diffuse;
+  hdr = acesFilm(hdr * 1.05);
+  hdr = pow(hdr, vec3f(1.0 / 2.2));
+  return vec4f(hdr, 1.0);
+}
+`;
+
+// ============================================
+// WEBGPU INIT
+// ============================================
+async function main() {
+  const canvas = document.getElementById('canvas');
+  const fallback = document.getElementById('fallback');
+
+  if (!navigator.gpu) {
+    canvas.style.display = 'none';
+    fallback.style.display = 'block';
+    return;
+  }
+
+  const adapter = await navigator.gpu.requestAdapter();
+  if (!adapter) {
+    canvas.style.display = 'none';
+    fallback.style.display = 'block';
+    return;
+  }
+
+  const device = await adapter.requestDevice();
+  const format = navigator.gpu.getPreferredCanvasFormat();
+
+  // Size canvas
+  const dpr = window.devicePixelRatio || 1;
+  const size = Math.min(window.innerWidth, window.innerHeight * 0.8, 800);
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+
+  const context = canvas.getContext('webgpu');
+  context.configure({ device, format, alphaMode: 'premultiplied' });
+
+  // Generate block data
+  const qrMatrix = generateQRMatrix(QR_CONTENT);
+  const blockData = generateBlockData(qrMatrix);
+
+  // Create buffers
+  const uniformBuffer = device.createBuffer({
+    size: 32,
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+
+  const typeBuffer = device.createBuffer({
+    size: MAX_BLOCKS * 4,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+
+  const posBuffer = device.createBuffer({
+    size: MAX_BLOCKS * 16,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+
+  const heightBuffer = device.createBuffer({
+    size: MAX_BLOCKS * 4,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+
+  const baseYBuffer = device.createBuffer({
+    size: MAX_BLOCKS * 4,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+
+  // Write block data to buffers
+  const paddedTypes = new Uint32Array(MAX_BLOCKS);
+  paddedTypes.set(blockData.types);
+  device.queue.writeBuffer(typeBuffer, 0, paddedTypes);
+
+  const paddedPositions = new Float32Array(MAX_BLOCKS * 4);
+  paddedPositions.set(blockData.positions);
+  device.queue.writeBuffer(posBuffer, 0, paddedPositions);
+
+  const paddedHeights = new Float32Array(MAX_BLOCKS);
+  paddedHeights.set(blockData.heights);
+  device.queue.writeBuffer(heightBuffer, 0, paddedHeights);
+
+  const paddedBaseY = new Float32Array(MAX_BLOCKS);
+  paddedBaseY.set(blockData.baseY);
+  device.queue.writeBuffer(baseYBuffer, 0, paddedBaseY);
+
+  // Bind group layouts
+  const blocksBindGroupLayout = device.createBindGroupLayout({
+    entries: [
+      { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
+      { binding: 1, visibility: GPUShaderStage.VERTEX, buffer: { type: 'read-only-storage' } },
+      { binding: 2, visibility: GPUShaderStage.VERTEX, buffer: { type: 'read-only-storage' } },
+      { binding: 3, visibility: GPUShaderStage.VERTEX, buffer: { type: 'read-only-storage' } },
+      { binding: 4, visibility: GPUShaderStage.VERTEX, buffer: { type: 'read-only-storage' } },
+    ],
+  });
+
+  const blocksBindGroup = device.createBindGroup({
+    layout: blocksBindGroupLayout,
+    entries: [
+      { binding: 0, resource: { buffer: uniformBuffer } },
+      { binding: 1, resource: { buffer: typeBuffer } },
+      { binding: 2, resource: { buffer: posBuffer } },
+      { binding: 3, resource: { buffer: heightBuffer } },
+      { binding: 4, resource: { buffer: baseYBuffer } },
+    ],
+  });
+
+  const skyBindGroupLayout = device.createBindGroupLayout({
+    entries: [
+      { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
+    ],
+  });
+
+  const skyBindGroup = device.createBindGroup({
+    layout: skyBindGroupLayout,
+    entries: [{ binding: 0, resource: { buffer: uniformBuffer } }],
+  });
+
+  // Pipelines
+  function makePipeline(bindGroupLayout, vertCode, fragCode, depthWrite, depthCompare, blend) {
+    const defaultBlend = {
+      color: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' },
+      alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' },
+    };
+    return device.createRenderPipeline({
+      layout: device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] }),
+      vertex: { module: device.createShaderModule({ code: vertCode }), entryPoint: 'main' },
+      fragment: {
+        module: device.createShaderModule({ code: fragCode }),
+        entryPoint: 'main',
+        targets: [{ format, blend: blend || defaultBlend }],
+      },
+      primitive: { topology: 'triangle-list', cullMode: 'none' },
+      depthStencil: { depthWriteEnabled: depthWrite, depthCompare, format: 'depth24plus' },
+    });
+  }
+
+  const skyPipeline = makePipeline(skyBindGroupLayout, skyVertexShader, skyFragmentShader, false, 'always');
+  const shadowPipeline = makePipeline(skyBindGroupLayout, shadowVertexShader, shadowFragmentShader, false, 'always', {
+    color: { srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha', operation: 'add' },
+    alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' },
+  });
+  const blocksPipeline = makePipeline(blocksBindGroupLayout, blocksVertexShader, blocksFragmentShader, true, 'less');
+
+  const depthTexture = device.createTexture({
+    size: [canvas.width, canvas.height],
+    format: 'depth24plus',
+    usage: GPUTextureUsage.RENDER_ATTACHMENT,
+  });
+
+  const aspectRatio = canvas.width / canvas.height;
+
+  // State
+  let isFlat = false;
+  let rawProgress = 0;
+  let progress = 0;
+  const startTime = Date.now();
+  let lastFrameTime = Date.now();
+
+  canvas.addEventListener('click', () => { isFlat = !isFlat; });
+
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  // Render loop
+  function render() {
+    const now = Date.now();
+    const dt = Math.min((now - lastFrameTime) / 1000, 0.05);
+    lastFrameTime = now;
+
+    const target = isFlat ? 1 : 0;
+    rawProgress += (target - rawProgress) * Math.min(1, LERP_SPEED * dt);
+    if (Math.abs(rawProgress - target) < 0.001) rawProgress = target;
+    progress = easeInOutCubic(rawProgress);
+
+    const time = (now - startTime) / 1000;
+
+    const uniformData = new Float32Array([
+      aspectRatio, time, blockData.numBlocks, progress, blockData.gridSize, 0, 0, 0,
+    ]);
+    device.queue.writeBuffer(uniformBuffer, 0, uniformData);
+
+    const commandEncoder = device.createCommandEncoder();
+    const textureView = context.getCurrentTexture().createView();
+
+    const renderPass = commandEncoder.beginRenderPass({
+      colorAttachments: [{
+        view: textureView,
+        clearValue: { r: 0, g: 0, b: 0, a: 0 },
+        loadOp: 'clear',
+        storeOp: 'store',
+      }],
+      depthStencilAttachment: {
+        view: depthTexture.createView(),
+        depthClearValue: 1,
+        depthLoadOp: 'clear',
+        depthStoreOp: 'store',
+      },
+    });
+
+    renderPass.setPipeline(skyPipeline);
+    renderPass.setBindGroup(0, skyBindGroup);
+    renderPass.draw(3);
+
+    renderPass.setPipeline(shadowPipeline);
+    renderPass.setBindGroup(0, skyBindGroup);
+    renderPass.draw(6);
+
+    renderPass.setPipeline(blocksPipeline);
+    renderPass.setBindGroup(0, blocksBindGroup);
+    renderPass.draw(36 * blockData.numBlocks);
+
+    renderPass.end();
+    device.queue.submit([commandEncoder.finish()]);
+
+    requestAnimationFrame(render);
+  }
+
+  render();
+}
+
+main();
+  </script>
+</body>
+</html>
